@@ -41,7 +41,9 @@
     Oppure possiamo calcolare solo la prima somma e aggiustarla con
     un'addizione e una sottrazione per ogni elemento successivo:
 
+    #+BEGIN_EXAMPLE
     sum(i+1) = sum(i) - elemento(i + 3) - elemento(i)
+    #+END_EXAMPLE
 
     Per un totale di n-2 somme.
 
@@ -51,3 +53,32 @@
 
     Quindi possiamo usare lo stesso identico codice per entrambi i
     casi.
+
+** Day2
+
+
+*** Parte 1
+    La prima parte è semplice, si tratta di interpretare correttamente
+    tre istruzioni.
+
+    La difficoltà maggiore è nel parsing dei dati: in python leggiamo
+    il file intero con f.read()
+
+    Applicando alla stringa ottenuta .splitlines() lo suddividiamo in
+    linee.
+
+    Dividiamo ogni stringa in due stringhe separate delimitate da spazi
+    con .split().
+
+    La prima stringa resta com'è, la seconda viene convertita in un
+    numero intero. Codice Python:
+
+    #+BEGIN_SRC python
+    [(x[0], int(x[1])) for x in (x.split() for x in f.read().splitlines())]
+    #+END_SRC
+
+*** Parte 2
+    La seconda parte è una variazione della prima con la modifica
+    semantica delle istruzioni. Senza astrarre inutilmente il codice
+    creo una funzione di interpretazione delle istruzioni diversa per
+    ciascuna parte da risolvere.
