@@ -1,0 +1,53 @@
+* Advent Of Code 2021
+
+  I think it's time to blow this thing
+
+  Get everybody and their stuff together
+
+  Okay 3-2-1
+
+  Let's jam... (cit)
+
+** Day 1
+
+*** Parte 1
+    Prima parte molto semplice:
+    1) il primo elemento viene assegnato alla variabile prev (previous,
+       precedente).
+    2) iteriamo dal secondo elemento all'ultimo confrontandolo con il
+       prev e incrementando count se necessario.
+    3) alla fine di ogni iterazione assegniamo a prev il valore
+       corrente.
+
+    Lo pseudo codice è il seguente:
+
+    #+BEGIN_SRC python
+    count = 0
+    prev = depths[0]
+      for cur in depths[1:]:
+	 if prev < cur:
+		 count += 1
+	 prev = cur
+    print(count)
+    #+END_SRC
+
+*** Parte 2
+    Seconda parte abbastanza semplice, osservando che si tratta dello
+    stesso algoritmo precedente ma applicato alla somma di tre elementi
+    consecutivi.
+
+    Possiamo calcolare la somma dei tre elementi con due loop annidati.
+
+    Oppure possiamo calcolare solo la prima somma e aggiustarla con
+    un'addizione e una sottrazione per ogni elemento successivo:
+
+    sum(i+1) = sum(i) - elemento(i + 3) - elemento(i)
+
+    Per un totale di n-2 somme.
+
+    Ad un esame più approfondito noto che lo stesso ragionamento si
+    può applicare per risolvere la parte 1, se la somma iniziale è di
+    un solo elemento.
+
+    Quindi possiamo usare lo stesso identico codice per entrambi i
+    casi.
