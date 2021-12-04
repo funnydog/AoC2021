@@ -96,3 +96,78 @@
    qualche sistema di error-correction.
 
    Lo risolvo solo in python per il momento.
+
+** Day 4
+*** Parte 1
+
+    Abbiamo una lista di numeri e delle schede del bingo da caricare
+    in memoria e dobbiamo anche tenere traccia di quali numeri della
+    scheda sono stati estratti.
+
+    Il problema principale è determinare la struttura dati più adatta
+    per rappresentare le schede e per risolvere il problema.
+
+    Per la lista dei numeri la struttura è semplicemente un array.
+
+    Per le schede proviamo ad usare due array:
+    1) un array con 25 numeri per rappresentare i numeri sulla scheda.
+    2) un array con 25 bool per segnare se il numero alla posizione
+       corrispondente è stato estratto.
+
+    Per mappare la posizione (x, y) => pos usiamo la formula:
+
+    #+BEGIN_EXAMPLE
+    pos = y * 5 + x
+    #+END_EXAMPLE
+
+    Viceversa per pos => (x, y):
+
+    #+BEGIN_EXAMPLE
+    x = pos % 5
+    y = pos // 5
+    #+END_EXAMPLE
+
+    Ogni scheda inoltre ha un campo won che segnala se è già vincente:
+    in questo caso anche se marchiamo un numero non è necessario
+    ricalcolare se la scheda ha vinto.
+
+    Una funzione mark(board, n) cerca nella scheda il numero n e se lo
+    trova lo segna come estratto.
+
+    Possiamo creare un'altra funzione check(board) per vedere se la
+    scheda è vincente. Così facendo però dovremmo visitare tutte le
+    colonne e tutte le righe.
+
+    Invece possiamo effettuare il check solo sull'ultimo numero che è
+    stato estratto, controllando la riga e la colonna cui appartiene.
+
+    E' meglio quindi fondere mark() e check() in un'unica funzione
+    mark_and_check() che:
+    1) controlla se il numero è presente nella scheda e lo segna
+       estratto.
+    2) controlla se la riga del numero estratto è stata tutta estratta
+    3) controlla se la colonna del numero estratto è stata tutta
+       estratta
+    4) restituisce un bool che indica se la scheda è vincente.
+
+    In particolare il seguente codice python:
+
+    #+BEGIN_SRC python
+      self.won = self.won \
+	  or self.check_row(pos) \
+	  or self.check_column(pos)
+    #+END_SRC
+
+    sfrutta il cosiddetto short-circuiting dell'operatore *or*: se la
+    prima condizione (self.won) è già *True* non elabora le condizioni
+    successive.
+
+    Per il calcolo dei punti (score) la struttura dei dati scelta
+    risulta adatta: basta iterare per ogni numero della scheda,
+    controllare se non è stato marcato e quindi sommarlo.
+
+*** Parte 2
+
+    Basta semplicemente eliminare dalla lista delle schede ogni scheda
+    vincente finché non ne resta una sola. A questo punto si arriva al
+    numero che fa vincere quest'ultima e si calcola lo score.
