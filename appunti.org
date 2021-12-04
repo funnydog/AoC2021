@@ -82,3 +82,17 @@
     semantica delle istruzioni. Senza astrarre inutilmente il codice
     creo una funzione di interpretazione delle istruzioni diversa per
     ciascuna parte da risolvere.
+
+** Day 3
+
+   Problema abbastanza noioso, sarà per via del wall-of-text?
+   Insomma.
+
+   Questi problemi dell'AoC che sembrano completamente artificiali
+   sono risolti di solito da qualche algoritmo famoso che in questo
+   caso mi sfugge.
+
+   Avendo a che fare con il conteggio dei bit forse è collegato a
+   qualche sistema di error-correction.
+
+   Lo risolvo solo in python per il momento.
