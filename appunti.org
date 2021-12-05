@@ -171,3 +171,60 @@
     Basta semplicemente eliminare dalla lista delle schede ogni scheda
     vincente finché non ne resta una sola. A questo punto si arriva al
     numero che fa vincere quest'ultima e si calcola lo score.
+
+** Day 5
+*** Parte 1
+
+    Non sappiamo quanto grande è la mappa e quindi dovremo usare una
+    sparse map (cioè una hash table / dizionario): a una coppia di
+    coordinate corrisponderà il numero di vortici presenti.
+
+    Creiamo una funzione draw(x0, y0, x1, y1) che aggiunge i vortici
+    lungo i punti della linea.
+
+    Il problema dice che le linee sono verticali o orizzontali e
+    questo semplifica tutto perché basta semplicmente incrementare le
+    due variabili x, y ad ogni iterazione del loop.
+
+    Se le righe fossero state arbitrarie avremmo dovuto ricorrere ad
+    algoritmi più complicati (Bresenham lineare).
+
+    Bisogna solo determinare l'incremento ad ogni iterazione.
+
+    Il codice può essere abbozzato come segue:
+
+    #+BEGIN_SRC python
+      def draw(x0, y0, x1, y1):
+	  sx = x0 < x1 and 1 or (x0 > x1 and -1 or 0)
+	  sy = y0 < y1 and 1 or (y0 > y1 and -1 or 0)
+
+	  while True:
+		  m[x0, y0] = m.get((x0, y0), 0) + 1
+		  if x0 == x1 and y0 == y1:
+			  break
+		  x0 += sx
+		  y0 += sy
+    #+END_SRC
+
+    La funzione draw dovrà essere chiamata solo per le righe
+    orizzontali e verticali, cioè quelle in cui x0 == x1 oppure
+    y0 == y1.
+
+    Dopo aver disegnato ogni segmento sarà sufficiente contare gli
+    elementi con valore > 1 iterando per ogni elemento del dizionario.
+
+*** Parte 2
+
+    Uguale alla parte 1 tranne che ora ci sono delle linee diagonali
+    ma solo a 45°.
+
+    Grazie a questo requisito possiamo usare la stessa procedura
+    semplificata draw() vista sopra senza ricorrere all'algoritmo di
+    Bresenham.
+
+    Nella prima iterazione del codice controllavo che i segmenti
+    fossero effettivamente a 45°: basta controllare che abs(x1-x0) ==
+    abs(y1-y0).
+
+    Poi, visto che non esistevano segmenti arbitrari nell'input, ho
+    tolto il check.
