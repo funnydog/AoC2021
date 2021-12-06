@@ -183,8 +183,10 @@
     lungo i punti della linea.
 
     Il problema dice che le linee sono verticali o orizzontali e
-    questo semplifica tutto perché basta semplicmente incrementare le
-    due variabili x, y ad ogni iterazione del loop.
+    questo semplifica tutto perché basta incrementare le due variabili
+    x0, y0 ad ogni iterazione del loop di una quantità costante (1, 0
+    o -1): non succederà mai che una delle due coordinate aumenti più
+    di un pixel per iterazione.
 
     Se le righe fossero state arbitrarie avremmo dovuto ricorrere ad
     algoritmi più complicati (Bresenham lineare).
@@ -218,9 +220,10 @@
     Uguale alla parte 1 tranne che ora ci sono delle linee diagonali
     ma solo a 45°.
 
-    Grazie a questo requisito possiamo usare la stessa procedura
-    semplificata draw() vista sopra senza ricorrere all'algoritmo di
-    Bresenham.
+    Questa caratteristica ci garantisce che l'incremento per
+    iterazione in entrambe le coordinate sia tra {1, 0, -1} e ci
+    permette di riutilizzare la stessa procedura semplificata draw()
+    vista sopra.
 
     Nella prima iterazione del codice controllavo che i segmenti
     fossero effettivamente a 45°: basta controllare che abs(x1-x0) ==
