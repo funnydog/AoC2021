@@ -255,12 +255,10 @@
     Il giorno 1 non c'è alcun pesce che si riproduce, quindi il totale
     dei pesci resta 5, la quantità iniziale.
 
-    Il giorno 2 c'è un pesce che si riproduce, producendo un pesce che
-    si riproodurrà nel futuro. Lo stesso pesce che si sta ora
-    riproducendo si riprodurrà a sua volta in futuro.
+    Il giorno 2 c'è un pesce che si riproduce quindi il totale dei
+    pesci presenti il giorno 2 diventa 6 (5 + 1).
 
-    Il totale dei pesci presenti il giorno 2 diventa 6 (5 + 1). Il
-    pesce che si è riprodotto e il pesce neonato a loro volta si
+    Il pesce che si è riprodotto e il pesce neonato a loro volta si
     riprodurranno nei giorni futuri:
 
     | giorno | numero pesci |                                              |
@@ -268,7 +266,7 @@
     | 2 + 9  | pesci + 1    | il pesce neonato si riproduce la prima volta |
 
     Perché aggiungiamo 7 e 9 anziché 6 e 8? Perché il testo suggerisce
-    che il giorno 0 è un valore valido, quindi in realtà trascorrono 7
+    che il timer 0 è un valore valido, quindi in realtà trascorrono 7
     giorni e non 6 per la prossima riproduzione anche se il timer
     parte da 6.
 
