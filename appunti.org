@@ -228,3 +228,103 @@
 
     Poi, visto che non esistevano segmenti arbitrari nell'input, ho
     tolto il check.
+
+** Day 6
+*** Parte 1
+
+    Il testo suggerisce che i pesci lanterna crescono in modo
+    esponenziale e quindi un approccio esplicito non funzionerà.
+
+    Nonostante l'indizio ho tentato inizialmente con un approccio
+    esplicito, forse perché non ancora perfettamente sveglio: inutile
+    dire che elencare ogni pesce in un array, anche se ordinato,
+    sicuramente diventerà un disastro nella parte 2 del problema.
+
+    Invece possiamo contare quanti pesci si riprodurranno in un
+    determinato giorno.
+
+    Con l'esempio di partenza 3,4,3,1,2:
+
+    | giorno | numero pesci |
+    |      1 |            0 |
+    |      2 |            1 |
+    |      3 |            1 |
+    |      4 |            2 |
+    |      5 |            1 |
+
+    Il giorno 1 non c'è alcun pesce che si riproduce, quindi il totale
+    dei pesci resta 5, la quantità iniziale.
+
+    Il giorno 2 c'è un pesce che si riproduce, producendo un pesce che
+    si riproodurrà nel futuro. Lo stesso pesce che si sta ora
+    riproducendo si riprodurrà a sua volta in futuro.
+
+    Il totale dei pesci presenti il giorno 2 diventa 6 (5 + 1). Il
+    pesce che si è riprodotto e il pesce neonato a loro volta si
+    riprodurranno nei giorni futuri:
+
+    | giorno | numero pesci |                                              |
+    | 2 + 7  | pesci + 1    | il pesce si riproduce di nuovo               |
+    | 2 + 9  | pesci + 1    | il pesce neonato si riproduce la prima volta |
+
+    Perché aggiungiamo 7 e 9 anziché 6 e 8? Perché il testo suggerisce
+    che il giorno 0 è un valore valido, quindi in realtà trascorrono 7
+    giorni e non 6 per la prossima riproduzione anche se il timer
+    parte da 6.
+
+    Passando al giorno 3: c'è un pesce che si riproduce quindi il
+    totale arriva a 7 (6 + 1). Questo pesce si riprodurrà di nuovo il
+    giorno 3 + 7 e il nuovo pesce si riprodurrà per la prima volta il
+    giorno 3 + 9. Quindi aggiorniamo l'array della riproduzione dei
+    pesci per i giorni 3 + 7 e 3 + 9.
+
+    Passando al giorno 4: ci sono due pesci che si riproducono quindi
+    il totale arriva a 9 (7 + 2). Questi due pesci si riprodurranno di
+    nuovo nei giorni 4 + 7 e i due pesci neonati nei giorni
+    4 + 9. Quindi aggiorniamo l'array della riproduzione dei pesci nei
+    giorni 4 + 7 e 4 + 9 (con due pesci stavolta!).
+
+    | giorno | numero pesci |                                             |
+    | 4 + 7  | pesci + 2    | i due pesci si riproducono di nuovo         |
+    | 4 + 9  | pesci + 2    | i due neonati si riproducono la prima volta |
+
+    E così via fino ad arrivare al giorno 80.
+
+    In pratica dobbiamo solo mantenere un array col numero di pesci
+    che si riproducono per ogni giorno che passa, aggiornandolo giorno
+    per giorno tenendo conto delle nuove nascite: la soluzione è
+    programmazione dinamica.
+
+    L'algoritmo è l'implementazione esatta della descrizione appena
+    data con l'unica accortezza che il giorno 1 ha indice array
+    pari 0 (quindi contiamo da 0 fino a 79 incluso).
+
+    #+BEGIN_SRC python
+      def solve(ages, days):
+	  day = [0] * (days + 9)
+
+	  for age in ages:
+	      day[age] += 1
+
+	  count = len(ages)
+	  for i in range(days):
+	      count += day[i]
+	      day[i + 7] += day[i]
+	      day[i + 9] += day[i]
+
+	  return count
+    #+END_SRC
+
+*** Parte 2
+
+    Identica alla parte 1 tranne che si arriva a 256 giorni anziché
+    a 80.
+
+    E' qui che si vede la potenza della programmazione dinamica:
+    l'approccio esplicito sarebbe stato impossibile e il tempo di
+    esecuzione improponibile.
+
+    Invece l'algoritmo produce una soluzione in pochi millisecondi
+    anche in python. In C e C++ la soluzione impiega meno di un
+    millisecondo. Per evitare overflow ho usato interi unsigned a 64
+    bit.
