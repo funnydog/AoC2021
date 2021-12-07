@@ -329,3 +329,39 @@
     anche in python. In C e C++ la soluzione impiega meno di un
     millisecondo. Per evitare overflow ho usato interi unsigned a 64
     bit.
+
+** Day 7
+*** Parte 1
+
+    Al di là del significato matematico del risultato che si vuole
+    trovare il problema sembra di facile soluzione: per ogni posizione
+    possibile calcoliamo il costo necessario a far convergere tutti i
+    granchi a tale posizione.
+
+    Il costo è il valore assoluto della differenza tra la posizione
+    del granchio e la posizione scelta.
+
+    Tra tutte le posizioni possibili scegliamo quella con costo più
+    basso.
+
+    L'implementazione impiega pochissimo anche in python, se c'è
+    bisogno di una soluzione non brute-force lo vedremo nella parte 2.
+
+*** Parte 2
+
+    Come la parte 1 solo che cambia il calcolo del costo in carburante
+    in funzione della distanza. In particolare, se la distanza è d il
+    costo in carburante è la somma dei numeri naturali da 1 a d e
+    cioè:
+
+    #+BEGIN_EXAMPLE
+    d * (d+1) / 2
+    #+END_EXAMPLE
+
+    [[https://it.wikipedia.org/wiki/1_%2B_2_%2B_3_%2B_4_%2B_%C2%B7_%C2%B7_%C2%B7][Formula di Gauss]].
+
+    Anche qui ci mette poco anche in python, inutile cercare soluzioni
+    più elaborate.
+
+    La soluzione C++, che usa le funzioni lambda a tutto spiano,
+    impiega un tempo paragonabile alla soluzione C.
