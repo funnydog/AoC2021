@@ -553,13 +553,17 @@
     Questa matrice è di facile costruzione ed è simmetrica perché
     l'operatore and è commutativo:
 
+    #+BEGIN_EXAMPLE
     M[i][j] = bitcount(encode(seg[i]) & encode(seg[j]))
+    #+END_EXAMPLE
 
     Con questa matrice è facile eliminare i candidati errati: se i è
     una cifra con una rappresentazione predeterminata e j ha più
     candidati, possiamo eliminare il candidato k in cui:
 
+    #+BEGIN_EXAMPLE
     bitcount(seg[i] & seg[j][k]) != M[i][j]
+    #+END_EXAMPLE
 
     Alla fine del procedimento di eliminazione, se il numero di
     candidati arriva a 1, abbiamo determinato la rappresentazione a
