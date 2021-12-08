@@ -70,8 +70,7 @@ def solve(row):
         k += 1
 
     if t < 10:
-        print("Couldn't find a solution")
-        return 0
+        raise RuntimeError("Couldn't find a solution")
 
     # map the encoded digit to the the actual value
     segmap = {v[0]: k for k, v in nums.items()}
@@ -83,8 +82,29 @@ def solve(row):
 
     return value
 
-def part2(values):
-    return sum(solve(x) for x in values)
+from itertools import permutations
+def bruteforce(row):
+    wiring, display = row
+
+    def decode(wire, p):
+        return "".join(sorted(p[i] for i in range(7) if wire & 1<<i))
+
+    segset = set(segments)
+    for p in permutations(letters):
+        for wire in wiring:
+            if not decode(wire, p) in segset:
+                break
+        else:
+            reverse = {seg: i for i, seg in enumerate(segments)}
+            value = 0
+            for d in display:
+                value = value * 10 + reverse[decode(d, p)]
+            return value
+
+    raise RuntimeError("Couldn't find a solution")
+
+def part2(values, fn):
+    return sum(fn(x) for x in values)
 
 import sys
 
@@ -106,6 +126,7 @@ if __name__ == "__main__":
             )
 
         print("Part1:", part1(values))
-        print("Part2:", part2(values))
+        print("Part2:", part2(values, solve))
+        #print("Part2 (brute-force):", part2(values, bruteforce))
     except FileNotFoundError:
         print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
