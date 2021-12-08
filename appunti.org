@@ -365,3 +365,209 @@
 
     La soluzione C++, che usa le funzioni lambda a tutto spiano,
     impiega un tempo paragonabile alla soluzione C.
+
+** Day 8
+*** Parte 1
+
+    La prima parte del problema è di facile soluzione in quanto
+    consiste nel contare le parole con 2, 3, 4 e 7 caratteri.
+
+*** Parte 2
+
+    La seconda parte è più complicata perché dobbiamo determinare la
+    corripondenza dei segmenti illuminati con le cifre.
+
+    Dalla prima parte del problema sappiamo già associare a
+    determinati segmenti determinate cifre:
+
+    1) ai 2 caratteri corrisponde la cifra 1
+    2) ai 3 caratteri corrisponde la cifra 7
+    3) ai 4 caratteri corrisponde la cifra 4
+    4) ai 7 caratteri corrisponde la cifra 8
+
+    Rimane il problema di determinare quali sono gli altri caratteri e
+    per farlo dobbiamo analizzare come sono rappresentati.
+
+    Il primo problema da risolvere è la rappresentazione dei segmenti
+    illuminati: ad esempio i segmenti "abcdefg" corrispondono a
+    "gfedcba" e a tutte le sue permutazioni. Quindi abbiamo bisogno di
+    un modo per rappresentare i segmenti che non tenga conto
+    dell'ordine in cui appaiono le lettere.
+
+    Per farlo ho usato una semplice bitmap calcolata come segue:
+
+    #+BEGIN_SRC python
+      letters = "abcdefg"
+
+      def encode(lseg):
+	  nseg = 0
+	  for l in lseg:
+	      nseg |= 1 << letters.index(l)
+	  return nseg
+    #+END_SRC
+
+    In questo modo una sequenza di segmenti in lettere produce sempre
+    lo stesso numero indipendentemente dal loro ordine. Si può
+    ottenere lo stesso risultato ordinando le lettere o usando dei
+    set.
+
+    Per risolvere il problema è necessario contare quanti segmenti
+    sono accesi. Nella rappresentazione letterale è semplice perché
+    basta contare il numero dei caratteri. Per quella numerica bisogna
+    contare il numero dei bit. Per farlo si possono usare le seguenti
+    funzioni:
+
+    #+BEGIN_SRC python
+      def bitcount(i):
+	  return bin(i).count("1")
+    #+END_SRC
+
+    In C/C++ si può usare l'intrinsic x86 popcnt() oppure la funzione
+    di Kernighan:
+
+    #+BEGIN_SRC c
+      int bitcount(unsigned x)
+      {
+	      int count = 0;
+	      while (x)
+	      {
+		      x &= x - 1;
+		      count++;
+	      }
+	      return count;
+      }
+    #+END_SRC
+
+    Tornando alla soluzione del problema possiamo partire dalla
+    rappresentazione delle cifre in segmenti e precalcolare quanti
+    segmenti accesi ha ogni cifra:
+
+    | Cifra | Segmenti | Numero segmenti |
+    |     0 | abcefg   |               6 |
+    |     1 | cf       |               2 |
+    |     2 | acdeg    |               5 |
+    |     3 | acdfg    |               5 |
+    |     4 | bcdf     |               4 |
+    |     5 | abdfg    |               5 |
+    |     6 | abdefg   |               6 |
+    |     7 | acf      |               3 |
+    |     8 | abcdefg  |               7 |
+    |     9 | abdfg    |               6 |
+
+    In questo modo quando mi imbatterò in una word di lunghezza 5 (ad
+    esempio "cdfbe") saprò che ad essa potranno corrispondere le
+    seguenti cifre: 2, 3, 5.
+
+    Con una word di lunghezza 6 (ad esempio "cefabd") avremo le
+    seguenti cifre possibili: 0, 6, 9.
+
+    Ogni segmento letto viene quindi associato alle cifre potenziali
+    che potrebbe rappresentare. Alcune cifre (1, 4, 7, e 8) avranno
+    una lista di un solo elemento e sono quelle la cui
+    rappresentazione è già determinata.
+
+    Per il primo esempio del problema ottengo il seguente elenco (ho
+    ordinato le lettere dei segmenti):
+
+    | Cifra | Segmenti             | Determinata |
+    |     0 | abcdef bcdefg abcdeg |             |
+    |     1 | ab                   | *           |
+    |     2 | bcdef acdfg abcdf    |             |
+    |     3 | bcdef acdfg abcdf    |             |
+    |     4 | abef                 | *           |
+    |     5 | bcdef acdfg abcdf    |             |
+    |     6 | abcdef bcdefg abcdeg |             |
+    |     7 | abd                  | *           |
+    |     8 | abcdefg              | *           |
+    |     9 | abcdef bcdefg abcdeg |             |
+
+    Rimane il problema di eliminare i segmenti sbagliati. Per farlo
+    bisogna osservare la rappresentazione delle cifre: ad esempio
+    osserviamo che la cifra 1, che ha normalmente rappresentazione
+    "cf", ha in comune con la cifra 3 entrambi i segmenti (la cifra 3
+    ha come normale rappresentazione "acdfg").
+
+    Nel nostro esempio i collegamenti sono stati mescolati ma la
+    proprietà deve rimanere, cioè la rappresentazione di 1 è "ab" e
+    questi due segmenti devono entrambi essere presenti nella
+    rappresentazione di 3.
+
+    Ma se osserviamo i possibili candidati della cifra 3, i primi due
+    hanno solo un segmento in comune con la cifra 1! Non possono
+    rappresentare la cifra 3, perciò li eliminiamo.
+
+    Risultato: la cifra 3 è associata al segmento "abcdf".
+
+    | Cifra | Segmenti             | Determinata |
+    |     0 | abcdef bcdefg abcdeg |             |
+    |     1 | ab                   | *           |
+    |     2 | bcdef acdfg abcdf    |             |
+    |     3 | abcdf                | *           |
+    |     4 | abef                 | *           |
+    |     5 | bcdef acdfg abcdf    |             |
+    |     6 | abcdef bcdefg abcdeg |             |
+    |     7 | abd                  | *           |
+    |     8 | abcdefg              | *           |
+    |     9 | abcdef bcdefg abcdeg |             |
+
+    Per lo stesso ragionamento eliminiamo anche "bcdefg" dalla
+    cifra 9, perché non ha i segmenti "ab" che sono in comune con la
+    cifra 1, e "bcdefg" dalla cifra 0.
+
+    | Cifra | Segmenti             | Determinata |
+    |     0 | abcdef abcdeg        |             |
+    |     1 | ab                   | *           |
+    |     2 | bcdef acdfg abcdf    |             |
+    |     3 | abcdf                | *           |
+    |     4 | abef                 | *           |
+    |     5 | bcdef acdfg abcdf    |             |
+    |     6 | abcdef bcdefg abcdeg |             |
+    |     7 | abd                  | *           |
+    |     8 | abcdefg              | *           |
+    |     9 | abcdef abcdeg        |             |
+
+    Ora procediamo con la cifra 3 che ha rappresentazione "abcdf". La
+    cifra 9 ha tutti i segmenti in comune con 3. Quindi eliminiamo
+    "abcdeg" dai segmenti di 9. La cifra 9 è determinata.
+
+    | Cifra | Segmenti             | Determinata |
+    |     0 | abcdef abcdeg        |             |
+    |     1 | ab                   | *           |
+    |     2 | bcdef acdfg abcdf    |             |
+    |     3 | abcdf                | *           |
+    |     4 | abef                 | *           |
+    |     5 | bcdef acdfg abcdf    |             |
+    |     6 | abcdef bcdefg abcdeg |             |
+    |     7 | abd                  | *           |
+    |     8 | abcdefg              | *           |
+    |     9 | abcdef               | *           |
+
+    Dobbiamo ripetere questo passaggio confrontando i segmenti in
+    comune tra le cifre determinate e quelle ancora indeterminate,
+    eliminando gli elementi impossibili, fino a quando tutte le cifre
+    saranno determinate.
+
+    Per farlo abbiamo bisogno di una matrice che ci dica quanti
+    segmenti in comune esistono tra due cifre arbitarie i e j.
+
+    Questa matrice è di facile costruzione ed è simmetrica perché
+    l'operatore and è commutativo:
+
+    M[i][j] = bitcount(encode(seg[i]) & encode(seg[j]))
+
+    Con questa matrice è facile eliminare i candidati errati: se i è
+    una cifra con una rappresentazione predeterminata e j ha più
+    candidati, possiamo eliminare il candidato k in cui:
+
+    bitcount(seg[i] & seg[j][k]) != M[i][j]
+
+    Alla fine del procedimento di eliminazione, se il numero di
+    candidati arriva a 1, abbiamo determinato la rappresentazione a
+    segmenti della cifra.
+
+    NOTA: per la prima soluzione del problema non ho usato questo
+    approccio perché mi avrebbe portato via troppo tempo e ho
+    preferito un brute-force con permutazioni, trovando la
+    permutazione che generasse un elemento per ogni cifra.
+
+    Poi con calma ho sviluppato il modo più ragionato.
