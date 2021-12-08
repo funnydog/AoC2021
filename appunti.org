@@ -510,55 +510,82 @@
     |     8 | abcdefg              | *           |
     |     9 | abcdef bcdefg abcdeg |             |
 
-    Per lo stesso ragionamento eliminiamo anche "bcdefg" dalla
-    cifra 9, perché non ha i segmenti "ab" che sono in comune con la
-    cifra 1, e "bcdefg" dalla cifra 0.
+    Per lo stesso ragionamento sulla cifra 2 eliminiamo anche:
+    * "bcdefg" dalla cifra 0 (deve avere 2 segmenti in comune)
+    * "abcdf" dalla cifra 2 (deve avere 1 segmento in comune)
+    * "abcdf" dalla cifra 5 (deve avere 1 segmento in comune)
+    * "abcdef" e "abcdeg" dalla cifra 6 (deve avere 1 segmento in comune)
+    * "bcdefg" dalla cifra 9 (deve avere due segmenti in comune)
 
-    | Cifra | Segmenti             | Determinata |
-    |     0 | abcdef abcdeg        |             |
-    |     1 | ab                   | *           |
-    |     2 | bcdef acdfg abcdf    |             |
-    |     3 | abcdf                | *           |
-    |     4 | abef                 | *           |
-    |     5 | bcdef acdfg abcdf    |             |
-    |     6 | abcdef bcdefg abcdeg |             |
-    |     7 | abd                  | *           |
-    |     8 | abcdefg              | *           |
-    |     9 | abcdef abcdeg        |             |
+    | Cifra | Segmenti      | Determinata |
+    |     0 | abcdef abcdeg |             |
+    |     1 | ab            | *           |
+    |     2 | bcdef acdfg   |             |
+    |     3 | abcdf         | *           |
+    |     4 | abef          | *           |
+    |     5 | bcdef acdfg   |             |
+    |     6 | bcdefg        | *           |
+    |     7 | abd           | *           |
+    |     8 | abcdefg       | *           |
+    |     9 | abcdef abcdeg |             |
 
-    Ora procediamo con la cifra 3 che ha rappresentazione "abcdf". La
-    cifra 9 ha tutti i segmenti in comune con 3. Quindi eliminiamo
-    "abcdeg" dai segmenti di 9. La cifra 9 è determinata.
+    Ora procediamo con la cifra 3 che ha rappresentazione "abcdf", ed
+    eliminiamo:
+    * "abcdef" dalla cifra 0 (deve avere 4 segmenti comuni)
+    * "abcdeg" dalla cifra 9 (deve avere 5 segmenti comuni)
 
-    | Cifra | Segmenti             | Determinata |
-    |     0 | abcdef abcdeg        |             |
-    |     1 | ab                   | *           |
-    |     2 | bcdef acdfg abcdf    |             |
-    |     3 | abcdf                | *           |
-    |     4 | abef                 | *           |
-    |     5 | bcdef acdfg abcdf    |             |
-    |     6 | abcdef bcdefg abcdeg |             |
-    |     7 | abd                  | *           |
-    |     8 | abcdefg              | *           |
-    |     9 | abcdef               | *           |
+    | Cifra | Segmenti    | Determinata |
+    |     0 | abcdeg      | *           |
+    |     1 | ab          | *           |
+    |     2 | bcdef acdfg |             |
+    |     3 | abcdf       | *           |
+    |     4 | abef        | *           |
+    |     5 | bcdef acdfg |             |
+    |     6 | bcdefg      | *           |
+    |     7 | abd         | *           |
+    |     8 | abcdefg     | *           |
+    |     9 | abcdef      | *           |
 
-    Dobbiamo ripetere questo passaggio confrontando i segmenti in
-    comune tra le cifre determinate e quelle ancora indeterminate,
-    eliminando gli elementi impossibili, fino a quando tutte le cifre
-    saranno determinate.
+    Procediamo con la cifra 4 che ha rappresentazione "abef" ed
+    eliminiamo:
+    * "bcdef" dalla cifra 2 (deve avere 2 segmenti comuni)
+    * "acdfg" dalla cifra 5 (deve avere 3 segmenti comuni)
 
-    Per farlo abbiamo bisogno di una matrice che ci dica quanti
-    segmenti in comune esistono tra due cifre arbitarie i e j.
+    | Cifra | Segmenti | Determinata |
+    |     0 | abcdeg   | *           |
+    |     1 | ab       | *           |
+    |     2 | acdfg    | *           |
+    |     3 | abcdf    | *           |
+    |     4 | abef     | *           |
+    |     5 | bcdef    | *           |
+    |     6 | bcdefg   | *           |
+    |     7 | abd      | *           |
+    |     8 | abcdefg  | *           |
+    |     9 | abcdef   | *           |
 
-    Questa matrice è di facile costruzione ed è simmetrica perché
-    l'operatore and è commutativo:
+    A questo punto abbiamo completato la mappatura da cifra ->
+    segmenti e possiamo decifrare i numeri sul display:
+
+    | Segmenti | Ordinati | Cifra |
+    | cdfeb    | bcdef    |     5 |
+    | fcadb    | abcdf    |     3 |
+    | cdfeb    | bcdef    |     5 |
+    | cdbaf    | abcdf    |     3 |
+
+
+    Per eliminare i candidati abbiamo bisogno di una matrice che ci
+    dica quanti segmenti in comune esistono tra due cifre arbitarie i
+    e j, calcolando il numero degli elementi dell'intersezione dei
+    segmenti.
+
+    Questa matrice è di facile costruzione ed è simmetrica:
 
     #+BEGIN_EXAMPLE
     M[i][j] = bitcount(encode(seg[i]) & encode(seg[j]))
     #+END_EXAMPLE
 
-    Con questa matrice è facile eliminare i candidati errati: se i è
-    una cifra con una rappresentazione predeterminata e j ha più
+    A questo punto è facile eliminare i candidati errati: se i è una
+    cifra con una rappresentazione predeterminata e j ha più
     candidati, possiamo eliminare il candidato k in cui:
 
     #+BEGIN_EXAMPLE
