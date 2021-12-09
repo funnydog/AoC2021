@@ -602,3 +602,40 @@
     permutazione che generasse un elemento per ogni cifra.
 
     Poi con calma ho sviluppato il modo più ragionato.
+
+** Day 9
+
+*** Parte 1
+
+    Creiamo la funzione risk(x, y) che calcola il rischio per
+    l'elemento (x, y) della mappa.
+
+    Controlliamo se ci sono vicini con valore minore e uguale
+    all'elemento: in quel caso non è un punto di minimo e il rischio è
+    zero.
+
+    Se invece i vicini hanno valore maggiore dell'elemento, l'elemento
+    è un punto di minimo con un rischio uguale a 1 + valore-elemento.
+
+    Eseguiamo risk() per ogni elemento della mappa e sommandone i
+    risultati otteniamo il rischio totale.
+
+*** Parte 2
+
+    Dobbiamo esplorare la mappa e lo possiamo fare con una Depth-First
+    Search. Avremmo potuto usare anche una Breadth-First Search ma
+    l'implementazione della DFS è più veloce.
+
+    La funzione dfs(x, y) restituisce:
+    * 0 se il valore in (x, y) == 9
+    * 0 se (x, y) è già stato visitato da una ricerca precedente
+    * n la dimensione del bacino in cui si trova (x,y).
+
+    Per ogni punto della mappa chiamiamo dfs() e controlliamo il
+    valore di ritorno: se è diverso da zero abbiamo trovato un nuovo
+    bacino, con area pari al valore stesso. Questo valore è aggiunto
+    ad un vettore.
+
+    Al termine avremo un vettore con la dimensione di ogni bacino
+    della mappa. Lo ordiniamo in ordine decrescente, prendiamo i primi
+    3 valori della lista e li moltiplichiamo tra di loro.
