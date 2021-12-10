@@ -639,3 +639,67 @@
     Al termine avremo un vettore con la dimensione di ogni bacino
     della mappa. Lo ordiniamo in ordine decrescente, prendiamo i primi
     3 valori della lista e li moltiplichiamo tra di loro.
+
+** Day 10
+
+*** Parte 1
+
+    Per analizzare una stringa possiamo usare uno stack: se troviamo
+    una parentesi aperta aggiungiamo la corrispondente parentesi
+    chiusa allo stack, se ne troviamo una chiusa controlliamo l'ultimo
+    elemento dello stack e vediamo se le due parentesi sono uguali.
+
+    Se sono uguali rimuoviamo l'ultimo elemento dello stack.
+
+    Se non lo sono segnaliamo l'errore e calcoliamo il numero dei
+    punti.
+
+    #+BEGIN_SRC python
+      OPENED = "([{<"
+      CLOSED = ")]}>"
+      POINTS = [3, 57, 1197, 25137]
+
+      def check_line(line):
+	  stack = []
+	  for c in line:
+	      idx = OPENED.find(c)
+	      if idx >= 0:
+		  stack.append(CLOSED[idx])
+	      else:
+		  if c != stack.pop():
+		      return POINTS[CLOSED.index(c)]
+	  return 0
+    #+END_SRC
+
+    Se la riga è incompleta la funzione check_line() restituirà un
+    punteggio pari a zero. Se invece la riga ha degli errori sarà
+    restituito il punteggio corrispondente all'errore.
+
+    La risposta alla parte 1 è la somma dei punti ottenuti dalla
+    funzione check_line() per ciascuna riga dell'input.
+
+*** Parte 2
+
+    Dobbiamo completare la stringa, ma la stringa l'abbiamo già
+    completata in quanto sono esattamente i caratteri presenti sullo
+    stack in ordine inverso!
+
+    Ad esempio per la prima riga:
+
+    | Input                    | Stack    | reversed(Stack) |
+    | [({(<(())[]>[[{[]{<()<>> | ])})]]}} | }}]])})}]       |
+
+    Con questi caratteri possiamo calcolare lo *score* richiesto:
+
+    #+BEGIN_SRC python
+      score = 0
+      for x in reversed(stack):
+	  score = score * 5 + CLOSED.index(x) + 1
+    #+END_SRC
+
+    La funzione check_line() è modificata per ritornare sia lo stack
+    che il punteggio che indica se la stringa è incompleta
+    (punteggio 0) o sbagliata (punteggio > 0).
+
+    La versione C fa uso di qualche trucco per evitare di allocare
+    memoria.
