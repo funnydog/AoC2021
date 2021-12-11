@@ -510,7 +510,7 @@
     |     8 | abcdefg              | *           |
     |     9 | abcdef bcdefg abcdeg |             |
 
-    Per lo stesso ragionamento sulla cifra 2 eliminiamo anche:
+    Per lo stesso ragionamento sulla cifra 1 eliminiamo anche:
     * "bcdefg" dalla cifra 0 (deve avere 2 segmenti in comune)
     * "abcdf" dalla cifra 2 (deve avere 1 segmento in comune)
     * "abcdf" dalla cifra 5 (deve avere 1 segmento in comune)
