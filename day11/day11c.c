@@ -31,9 +31,8 @@ static void map_inc(struct map *m, int x, int y)
 	static const int DX[] = {-1, -1, 0, 1, 1, 1, 0, -1};
 	static const int DY[] = {0, -1, -1, -1, 0, 1, 1, 1};
 
-	if (m->map[y][x] && ++m->map[y][x] > '9')
+	if (m->map[y][x] <= '9' && ++m->map[y][x] > '9')
 	{
-		m->map[y][x] = 0;
 		for (int i = 0; i < 8; i++)
 		{
 			int nx = x + DX[i];
@@ -61,7 +60,7 @@ static size_t map_step(struct map *m)
 	{
 		for (int x = 0; x < 10; x++)
 		{
-			if (m->map[y][x] == 0)
+			if (m->map[y][x] > '9')
 			{
 				m->map[y][x] = '0';
 				count++;

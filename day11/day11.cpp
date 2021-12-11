@@ -21,9 +21,8 @@ struct Map
 
 	void inc(int x, int y)
 	{
-		if (data[y][x] > 0 && ++data[y][x] > '9')
+		if (data[y][x] <= '9' && ++data[y][x] > '9')
 		{
-			data[y][x] = 0;
 			for (auto [dx, dy]: NEIGHBORS)
 			{
 				int nx = x + dx;
@@ -51,7 +50,7 @@ struct Map
 		{
 			for (int x = 0; x < 10; x++)
 			{
-				if (data[y][x] == 0)
+				if (data[y][x] > '9')
 				{
 					data[y][x] = '0';
 					count++;

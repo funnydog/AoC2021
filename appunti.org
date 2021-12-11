@@ -732,26 +732,24 @@
     lampeggiato.
 
     Nel codice abbiamo una matrice 10x10 che viene aggiornata ad ogni
-    step. Per segnare un polpo che ha già lampeggiato ne impostiamo
-    l'energia a un valore negativo.
+    step. Prima di incrementare il valore di energia di un polpo
+    controlliamo se ha già lampeggiato verificando che la sua energia
+    sia <= 9.
 
     La funzione che incrementa l'energia di ogni polpo è ricorsiva:
 
-    1) controlla se il polpo ha energia negativa (ha già lampeggiato)
+    1) controlla se il polpo ha energia > 9 (ha già lampeggiato)
        e in quel caso lo lascia stare: questo accorgimento è dettato
        dalla regola 2 che ogni polpo può lampeggiare una sola volta in
        uno step.
 
     2) aumenta l'energia del polpo di 1 e se supera il livello 9 fa
-       lampeggiare il polpo:
-
-       1) lo segna come già lampeggiato impostando l'energia a -1;
-
-       2) incrementa l'energia dei polpi vicini.
+       lampeggiare il polpo: incrementiamo l'energia di ogni polpo
+       vicino.
 
     Dopo aver richiamato la funzione per ogni polpo della mappa alcuni
-    polpi avranno energia negativa: sono i polpi che hanno lampeggiato
-    durante lo step.
+    avranno energia >9: sono i quelli che hanno lampeggiato durante lo
+    step.
 
     Li contiamo e impostiamo la loro energia a zero (regola 3), così
     che il prossimo step possa aggiornarli correttamente.

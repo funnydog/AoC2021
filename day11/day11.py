@@ -11,12 +11,11 @@ class Map(object):
         self.width = len(self.data[0])
 
     def inc(self, x, y):
-        if self.data[y][x] < 0:
+        if self.data[y][x] > 9:
             return
 
         self.data[y][x] += 1
         if self.data[y][x] > 9:
-            self.data[y][x] = -1
             for dx, dy in self.NEIGHBORS:
                 nx = x + dx
                 ny = y + dy
@@ -34,24 +33,24 @@ class Map(object):
         count = 0
         for y in range(self.height):
             for x in range(self.width):
-                if self.data[y][x] < 0:
-                    count += 1
+                if self.data[y][x] > 9:
                     self.data[y][x] = 0
+                    count += 1
 
         return count
 
 def solve(txt):
     m = Map(txt)
-    i = 0
-    part1 = 0
+    part1, part2 = 0, 0
     while True:
         flashes = m.step()
-        if i < 100:
+        if part2 < 100:
             part1 += flashes
+        part2 += 1
         if flashes == m.width * m.height:
             break
-        i += 1
-    return part1, i+1
+
+    return part1, part2
 
 import sys
 
