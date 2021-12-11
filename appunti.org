@@ -703,3 +703,66 @@
 
     La versione C fa uso di qualche trucco per evitare di allocare
     memoria.
+
+** Day 11
+
+*** Parte 1
+
+    Ogni elemento della mappa rappresenta un livello di energia che
+    dobbiamo aggiornare ad ogni step seguendo una serie di regole:
+
+    1) ogni polpo aumenta il suo livello di 1 ad ogni step;
+
+    2) se un polpo aumenta l'energia sopra a 9 lampeggia e causa
+       l'incremento di energia dei polpi che gli stanno attorno. Per
+       effetto dell'incremento, a loro volta i polpi vicini potrebbero
+       lampeggiare causando l'aumento di energia di altri polpi vicini
+       (attenzione però, che un polpo può lampeggiare una volta sola
+       per step).
+
+    3) Un polpo che ha già lampeggiato assume livello di energia zero
+       al termine dello step.
+
+    Le regole 2 e 3 ci dicono che se un polpo ha lampeggiato non
+    dobbiamo più aggiornare il suo livello di energia anche se dei
+    polpi vicini lampeggiano: questo perché il polpo può lampeggiare
+    una volta sola e al termine dello step deve avere energia zero.
+
+    Quindi dobbiamo tenere traccia di quali polpi hanno già
+    lampeggiato.
+
+    Nel codice abbiamo una matrice 10x10 che viene aggiornata ad ogni
+    step. Per segnare un polpo che ha già lampeggiato ne impostiamo
+    l'energia a un valore negativo.
+
+    La funzione che incrementa l'energia di ogni polpo è ricorsiva:
+
+    1) controlla se il polpo ha energia negativa (ha già lampeggiato)
+       e in quel caso lo lascia stare: questo accorgimento è dettato
+       dalla regola 2 che ogni polpo può lampeggiare una sola volta in
+       uno step.
+
+    2) aumenta l'energia del polpo di 1 e se supera il livello 9 fa
+       lampeggiare il polpo:
+
+       1) lo segna come già lampeggiato impostando l'energia a -1;
+
+       2) incrementa l'energia dei polpi vicini.
+
+    Dopo aver richiamato la funzione per ogni polpo della mappa alcuni
+    polpi avranno energia negativa: sono i polpi che hanno lampeggiato
+    durante lo step.
+
+    Li contiamo e impostiamo la loro energia a zero (regola 3), così
+    che il prossimo step possa aggiornarli correttamente.
+
+    Sommando i polpi che hanno lampeggiato ad ogni step da 1..100
+    otteniamo la risposta alla parte 1.
+
+*** Parte 2
+
+    La parte 2 è banale una volta risolta la parte 1: basta continuare
+    a effettuare step finché tutti i polpi lampeggiano.
+
+    A quel punto la risposta è il numero di step effettuati per
+    raggiungere questo stato.
