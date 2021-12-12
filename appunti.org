@@ -764,3 +764,108 @@
 
     A quel punto la risposta è il numero di step effettuati per
     raggiungere questo stato.
+
+** Day 12
+
+*** Parte 1
+
+    Dobbiamo contare tutti i percorsi possibili da "start" a "end" e
+    per farlo dobbiamo ricorrere al backtracking: proviamo ogni
+    percorso e se arriviamo a "end" lo conteggiamo. Se invece
+    prendiamo una strada senza uscita torniamo indietro e scegliamo
+    un'altra strada.
+
+    Per rappresentare il grafo della mappa possiamo usare un
+    dizionario che associa ad una determinata posizione una lista di
+    locazioni da essa raggiungibili:
+
+    #+BEGIN_SRC python
+      m = {}
+      for line in txt.splitlines():
+	  src, dst = line.split("-")
+	  m[src] = m.get(src, []) + [dst]
+	  m[dst] = m.get(dst, []) + [src]
+    #+END_SRC
+
+    La funzione backtrack() esegue il lavoro reale e restituisce il
+    numero di percorsi validi trovati:
+
+    #+BEGIN_SRC python
+      def backtrack(cur, lst, m):
+	  if cur == "end":
+	      return 1
+
+	  lst.append(cur)
+	  count = 0
+	  for i in m.get(cur, []):
+	      should_skip = i.upper() != i and i in lst
+	      if should_skip:
+		  continue
+
+	      count += backtrack(i, lst, m)
+
+	  lst.pop()
+
+	  return count
+    #+END_SRC
+
+    Alla funzione passiamo cur che è la posizione corrente, lst che è
+    la lista delle posizioni già visitate, m il grafo della mappa.
+
+    La variabile should_skip controlla se dobbiamo evitare di prendere
+    una certa strada: il problema infatti ci dice che non possiamo
+    visitare due volte una locazione in minuscolo.
+
+*** Parte 2
+
+    La parte 2 rilassa il vincolo sulle locazioni minuscole: possiamo
+    visitare una sola locazione minuscola al massimo due volte.
+
+    Modelliamo questa regola passando alla funzione backtrack la
+    variabile *assigned* che assume il valore True se la locazione
+    minuscola è già stata visitata due volte, False altrimenti.
+
+    La funzione backtrack() cambia come segue:
+
+    #+BEGIN_SRC python
+      def backtrack(cur, lst, assigned, m):
+	  if cur == "end":
+	      return 1
+
+	  lst.append(cur)
+	  count = 0
+	  for i in m.get(cur, []):
+	      should_skip = i.upper() != i and i in lst
+	      if should_skip and assigned or i == "start":
+		  continue
+
+	      count += backtrack(i, lst, assigned or should_skip, m)
+
+	      lst.pop()
+
+	  return count
+    #+END_SRC
+
+    In questo caso non è sufficiente controllare should_skip ma
+    dobbiamo anche verificare che una locazione minuscola sia stata
+    visitata due volte: se non lo è stata allora è permesso visitare
+    la locazione minuscola corrente di nuovo. A patto che non sia
+    "start".
+
+    Se stiamo visitando una locazione minuscola per la seconda volta
+    allora la variabile should_skip è True. Perciò quando chiamiamo
+    backtrack() assigned diventa: assigned or should_skip.
+
+    In questo modo se assigned era False diventa True ed eventuali
+    locazioni minuscole già visitate non possono più essere visitate.
+
+    Se invece assigned era True rimane True e nulla cambia.
+
+    Possiamo calcolare il risultato della parte 1 col nuovo codice
+    passando il parametro assigned = True. Passando il parametro
+    assigned = False otterremo invece il risultato della parte 2.
+
+    La versione C implementa uno sparse graph e impiega un tempo di un
+    ordine di grandezza inferiore della versione python che soffre
+    dell'estrema lentezza del linguaggio nell'eseguire le chiamate
+    alle funzioni.
