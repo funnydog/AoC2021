@@ -21,16 +21,15 @@ istream& operator>>(istream& in, Map& m)
 	return in;
 }
 
-static size_t backtrack(const string& cur, vector<string>& lst, bool assigned, Map& m)
+static size_t backtrack(vector<string>& lst, bool assigned, const Map& m)
 {
-	if (cur == "end")
+	if (lst.back() == "end")
 	{
 		return 1;
 	}
 
-	lst.push_back(cur);
 	size_t count = 0;
-	for (const auto& can : m[cur])
+	for (const auto& can : m.at(lst.back()))
 	{
 		bool should_skip = false;
 		if (can[0] != toupper(can[0]))
@@ -43,9 +42,10 @@ static size_t backtrack(const string& cur, vector<string>& lst, bool assigned, M
 			continue;
 		}
 
-		count += backtrack(can, lst, assigned || should_skip, m);
+		lst.push_back(can);
+		count += backtrack(lst, assigned || should_skip, m);
+		lst.pop_back();
 	}
-	lst.pop_back();
 	return count;
 }
 
@@ -69,7 +69,8 @@ int main(int argc, char *argv[])
 	in.close();
 
 	vector<string> lst;
-	fmt::print("Part1: {}\n", backtrack("start", lst, true, m));
-	fmt::print("Part2: {}\n", backtrack("start", lst, false, m));
+	lst.push_back("start");
+	fmt::print("Part1: {}\n", backtrack(lst, true, m));
+	fmt::print("Part2: {}\n", backtrack(lst, false, m));
 	return 0;
 }

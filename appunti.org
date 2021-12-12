@@ -791,30 +791,36 @@
     numero di percorsi validi trovati:
 
     #+BEGIN_SRC python
-      def backtrack(cur, lst, m):
+      def backtrack(lst, m):
+	  cur = lst[-1]
 	  if cur == "end":
 	      return 1
 
-	  lst.append(cur)
 	  count = 0
 	  for i in m.get(cur, []):
 	      should_skip = i.upper() != i and i in lst
 	      if should_skip:
 		  continue
 
-	      count += backtrack(i, lst, m)
-
-	  lst.pop()
+	      lst.append(i)
+	      count += backtrack(lst, m)
+	      lst.pop()
 
 	  return count
     #+END_SRC
 
-    Alla funzione passiamo cur che è la posizione corrente, lst che è
-    la lista delle posizioni già visitate, m il grafo della mappa.
+    Alla funzione passiamo lst che è la lista delle posizioni già
+    visitate (inizialmente contiene solo "start") e m il grafo della
+    mappa.
 
     La variabile should_skip controlla se dobbiamo evitare di prendere
     una certa strada: il problema infatti ci dice che non possiamo
     visitare due volte una locazione in minuscolo.
+
+    Prima di richiamare ricorsivamente backtrack() aggiungiamo
+    l'elemento candidato *i* alla lista.
+
+    Al ritorno da backtrack() tale elemento viene rimosso.
 
 *** Parte 2
 
@@ -828,19 +834,19 @@
     La funzione backtrack() cambia come segue:
 
     #+BEGIN_SRC python
-      def backtrack(cur, lst, assigned, m):
+      def backtrack(lst, assigned, m):
+	  cur = lst[-1]
 	  if cur == "end":
 	      return 1
 
-	  lst.append(cur)
 	  count = 0
 	  for i in m.get(cur, []):
 	      should_skip = i.upper() != i and i in lst
 	      if should_skip and assigned or i == "start":
 		  continue
 
-	      count += backtrack(i, lst, assigned or should_skip, m)
-
+	      lst.append(i)
+	      count += backtrack(lst, assigned or should_skip, m)
 	      lst.pop()
 
 	  return count

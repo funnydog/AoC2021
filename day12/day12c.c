@@ -176,21 +176,15 @@ static void array_append(struct array *a, size_t i)
 	a->data[a->count++] = i;
 }
 
-static size_t backtrack(size_t cur, struct array *arr, bool assigned, const struct graph *g)
+static size_t backtrack(struct array *arr, bool assigned, const struct graph *g)
 {
+	size_t cur = arr->data[arr->count - 1];
 	if (!strcmp(g->nodes[cur].key, "end"))
 	{
 		return 1;
 	}
 
-	/* no edges */
-	if (!g->nodes[cur].key)
-	{
-		return 0;
-	}
-
 	size_t count = 0;
-	array_append(arr, cur);
 	for (struct edge *e = g->nodes[cur].edges;
 	     e;
 	     e = e->next)
@@ -199,7 +193,7 @@ static size_t backtrack(size_t cur, struct array *arr, bool assigned, const stru
 		bool should_skip = false;
 		if (e->node[0] != toupper(e->node[0]))
 		{
-			for (size_t i = 0; i < arr->count; i++)
+			for (size_t i = 1; i < arr->count; i++)
 			{
 				if (arr->data[i] == idx)
 				{
@@ -209,14 +203,15 @@ static size_t backtrack(size_t cur, struct array *arr, bool assigned, const stru
 			}
 		}
 
-		if ((assigned && should_skip) || !strcmp(e->node, "start"))
+		if ((assigned && should_skip) || idx == arr->data[0])
 		{
 			continue;
 		}
 
-		count += backtrack(idx, arr, assigned || should_skip, g);
+		array_append(arr, idx);
+		count += backtrack(arr, assigned || should_skip, g);
+		arr->count--;
 	}
-	arr->count--;
 
 	return count;
 }
@@ -241,10 +236,12 @@ int main(int argc, char *argv[])
 	graph_load(in, &g);
 	fclose(in);
 
-	size_t start = find_node(&g, "start");
-	printf("Part1: %zu\n", backtrack(start, &a, true, &g));
-	printf("Part2: %zu\n", backtrack(start, &a, false, &g));
+	array_append(&a, find_node(&g, "start"));
+	printf("Part1: %zu\n", backtrack(&a, true, &g));
+	printf("Part2: %zu\n", backtrack(&a, false, &g));
+
 	graph_release(&g);
 	array_release(&a);
+
 	return 0;
 }
