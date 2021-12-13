@@ -14,9 +14,6 @@ struct map
 	struct dot *data;
 	size_t count;
 	size_t size;
-
-	int width;
-	int height;
 };
 
 static void map_release(struct map *m)
@@ -27,7 +24,6 @@ static void map_release(struct map *m)
 static void map_load(FILE *in, struct map *m)
 {
 	m->count = 0;
-	m->width = m->height = 0;
 
 	char *line = NULL;
 	size_t lsize = 0;
@@ -43,9 +39,6 @@ static void map_load(FILE *in, struct map *m)
 		{
 			break;
 		}
-		int px = strtol(sx, NULL, 10);
-		int py = strtol(sy, NULL, 10);
-
 		if (m->count == m->size)
 		{
 			size_t size = m->size ? m->size * 2 : 32;
@@ -57,16 +50,8 @@ static void map_load(FILE *in, struct map *m)
 			m->size = size;
 			m->data = data;
 		}
-		if (m->width <= px)
-		{
-			m->width = px + 1;
-		}
-		if (m->height <= py)
-		{
-			m->height = py + 1;
-		}
-		m->data[m->count].x = px;
-		m->data[m->count].y = py;
+		m->data[m->count].x = strtol(sx, NULL, 10);
+		m->data[m->count].y = strtol(sy, NULL, 10);
 		m->count++;
 	}
 	free(line);
@@ -74,7 +59,6 @@ static void map_load(FILE *in, struct map *m)
 
 static void map_fold_up(struct map *m, int fy)
 {
-	m->height = fy;
 	for (size_t i = 0; i < m->count; i++)
 	{
 		if (m->data[i].y > fy)
@@ -86,7 +70,6 @@ static void map_fold_up(struct map *m, int fy)
 
 static void map_fold_left(struct map *m, int fx)
 {
-	m->width = fx;
 	for (size_t i = 0; i < m->count; i++)
 	{
 		if (m->data[i].x > fx)
@@ -100,26 +83,15 @@ static int dotcmp(const void *pa, const void *pb)
 {
 	const struct dot *a = pa;
 	const struct dot *b = pb;
-	if (a->y < b->y)
+	if (a->y != b->y)
 	{
-		return -1;
+		return a->y < b->y ? -1 : 1;
 	}
-	else if (a->y > b->y)
+	else if (a->x != b->x)
 	{
-		return 1;
+		return a->x < b->x ? -1 : 1;
 	}
-	else if (a->x < b->x)
-	{
-		return -1;
-	}
-	else if (a->x > b->x)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+	return 0;
 }
 
 static size_t map_count(struct map *m)
@@ -127,7 +99,7 @@ static size_t map_count(struct map *m)
  	qsort(m->data, m->count, sizeof(m->data[0]), dotcmp);
 
 	size_t count = 0;
-	struct dot prev = {m->width, m->height};
+	struct dot prev = {-1, -1};
 	for (size_t i = 0; i < m->count; i++)
 	{
 		if (prev.x != m->data[i].x || prev.y != m->data[i].y)
@@ -143,24 +115,25 @@ static void map_print(struct map *m)
 {
  	qsort(m->data, m->count, sizeof(m->data[0]), dotcmp);
 
-	int px = -1;
+	int px = 0;
 	int py = 0;
 	for (size_t i = 0; i < m->count; i++)
 	{
-		if (px == m->data[i].x && py == m->data[i].y)
+		if (py == m->data[i].y && px > m->data[i].x)
 		{
 			continue;
 		}
 		for (; py < m->data[i].y; py++)
 		{
 			putchar('\n');
-			px = -1;
+			px = 0;
 		}
-		for (px++; px < m->data[i].x; px++)
+		for (; px < m->data[i].x; px++)
 		{
 			putchar(' ');
 		}
 		putchar('#');
+		px++;
 	}
 	putchar('\n');
 }

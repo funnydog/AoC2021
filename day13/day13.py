@@ -3,38 +3,42 @@
 class Sheet(object):
     def __init__(self, values):
         self.values = values
-        self.width = max(x for x, y in values) + 1
-        self.height = max(y for x, y in values) + 1
 
     def fold_up(self, fy):
-        self.height = fy
-        lst = []
-        for x, y in self.values:
+        for i, (x, y) in enumerate(self.values):
             if y > fy:
-                lst.append((x, 2*fy-y))
-            else:
-                lst.append((x, y))
-        self.values = lst
+                self.values[i] = (x, 2 * fy - y)
 
     def fold_left(self, fx):
-        self.width = fx
-        lst = []
-        for x, y in self.values:
+        for i, (x, y) in enumerate(self.values):
             if x > fx:
-                lst.append((2*fx-x, y))
-            else:
-                lst.append((x, y))
-        self.values = lst
+                self.values[i] = (2 * fx - x, y)
 
     def count(self):
         return len(set(self.values))
 
     def __str__(self):
-        s = set(self.values)
-        return "\n".join(
-            "".join((x, y) in s and "#" or " " for x in range(self.width))
-            for y in range(self.height)
-        )
+        lst = []
+
+        cx, cy = 0, 0
+        for x, y in sorted(self.values, key=lambda p: (p[1], p[0])):
+            # NOTE: take care of duplicates
+            if cy == y and cx > x:
+                continue
+
+            if y - cy:
+                lst.append("\n" * (y - cy))
+                cx = 0
+
+            if x - cx:
+                lst.append(" " * (x - cx))
+
+            lst.append("#")
+
+            cy = y
+            cx = x + 1
+
+        return "".join(lst)
 
 def parse_sheet(txt):
     coords = []

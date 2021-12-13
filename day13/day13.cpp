@@ -8,12 +8,9 @@ using namespace std;
 struct Map
 {
 	vector<pair<int, int>> data;
-	int width;
-	int height;
 
 	void fold_up(int pos)
 	{
-		height = pos;
 		for (auto& p: data)
 		{
 			if (p.second > pos)
@@ -25,7 +22,6 @@ struct Map
 
 	void fold_left(int pos)
 	{
-		width = pos;
 		for (auto& p: data)
 		{
 			if (p.first > pos)
@@ -39,8 +35,8 @@ struct Map
 	{
 		sort();
 		size_t count = 0;
-		int px = width;
-		int py = height;
+		int px = -1;
+		int py = -1;
 		for (auto [x, y] : data)
 		{
 			if (x != px || y != py)
@@ -57,27 +53,28 @@ struct Map
 	{
 		sort();
 
-		int px = -1;
-		int py = 0;
+		int cx = 0;
+		int cy = 0;
 		for (auto [x, y]: data)
 		{
-			if (x == px && y == py)
+			if (cy == y && cx > x)
 			{
 				continue;
 			}
 
-			for (; py < y; py++)
+			for (; cy < y; cy++)
 			{
 				putchar('\n');
-				px = -1;
+				cx = 0;
 			}
 
-			for (px++; px < x; px++)
+			for (; cx < x; cx++)
 			{
 				putchar(' ');
 			}
 
 			putchar('#');
+			cx++;
 		}
 		putchar('\n');
 	}
@@ -95,7 +92,6 @@ struct Map
 istream& operator>>(istream& in, Map &m)
 {
 	m.data.clear();
-	m.width = m.height = 0;
 
 	string line;
 	while (getline(in, line) && !line.empty())
@@ -106,14 +102,6 @@ istream& operator>>(istream& in, Map &m)
 			int x = stoi(line.substr(0, p));
 			int y = stoi(line.substr(p+1));
 			m.data.push_back(make_pair(x, y));
-			if (m.width <= x)
-			{
-				m.width = x + 1;
-			}
-			if (m.height <= y)
-			{
-				m.height = y + 1;
-			}
 		}
 	}
 	return in;

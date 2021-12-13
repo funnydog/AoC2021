@@ -892,8 +892,6 @@
     y' = fy - (y - fy) = fy + fy - y = 2 * fy - y
     #+END_EXAMPLE
 
-    L'altezza del foglio diventa fy.
-
     Se pieghiamo verso sinistra (fold left) tutti i punti con
     coordinata x maggiore della linea di piegatura fx devono essere
     spostati ad una nuova coordinata x calcolata come segue:
@@ -901,8 +899,6 @@
     #+BEGIN_EXAMPLE
     x' = fx - (x - fx) = fx + fx - x = 2 * fx - x
     #+END_EXAMPLE
-
-    La larghezza del foglio diventa fx.
 
     La nuova lista avrà dei punti che si sovrappongono, cioè che
     compaiono più volte.
@@ -918,10 +914,8 @@
     Consiste nell'effettuare tutte le piegature indicate nel testo del
     problema e stampare infine il risultato.
 
-    Per stampare il risultato inseriamo i punti della lista in un set
-    e per ogni punto (x, y), con 0 <= x < width e 0 <= y < height,
-    verifichiamo se il punto è nel set. In quel caso stampiamo in '#'
-    altrimenti uno spazio ' '.
+    Per stampare il risultato ordiniamo la lista dei punti dall'alto
+    al basso e da sinistra a destra.
 
-    Nella versione C e C++ ordiniamo la lista e la stampiamo dall'alto
-    verso il basso.
+    Per ogni punto spostiamo il cursore dalla posizione corrente alla
+    posizione del punto e lo stampiamo.
