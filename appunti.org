@@ -987,6 +987,19 @@
     Effettuiamo questa operazione per ogni coppia del dizionario
     iniziale, completando lo step.
 
+    Lo step dal dizionario visto in precedenza a quello successivo è
+    il seguente:
+    1) per la coppia 'NN': 1 applichiamo la regola 'NN -> C':
+       1. new_couples = {'NC': 1, 'CN': 1}.
+       2. letters = {'N': 2, 'B': 1, 'C': 2}.
+    2) per la coppia 'NC': 1 applichiamo la regola 'NC -> B':
+       1. new_couples = {'NC': 1, 'CN': 1, 'NB': 1, 'BC': 1}
+       2. letters = {'N': 2, 'B': 2, 'C': 2}
+    3) per la coppia 'CB': 1 applichiamo la regola 'CB -> H':
+       1. new_couples = {'NC': 1, 'CN': 1, 'NB': 1, 'BC': 1, 'CH': 1,
+          'HB': 1}.
+       2. letters = {'N': 2, 'B': 2, 'C': 2, 'H': 1}
+
     Eseguiti tutti 10 gli step previsti determiniamo la lettera che si
     ripete di più e quella che si ripete di meno (massimo e minimo dei
     valori del dizionario).
