@@ -73,7 +73,7 @@ static int *load_numbers(FILE *in, size_t *count)
 	char *line = NULL;
 	int *numbers = NULL;
 	size_t ncount = 0;
-	if (getline(&line, &lsize, in))
+	if (getline(&line, &lsize, in) != -1)
 	{
 		size_t size = 0;
 		char *tok = strtok(line, ",\n");

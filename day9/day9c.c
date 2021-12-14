@@ -24,7 +24,7 @@ static int map_load(FILE *in, struct map *m)
 	size_t lsize = 0;
 	ssize_t len;
 	size_t mcount = 0;
-	while ((len = getline(&line, &lsize, in)))
+	while ((len = getline(&line, &lsize, in)) != -1)
 	{
 		len--;
 		if (!m->data)

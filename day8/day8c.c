@@ -27,7 +27,7 @@ static struct entry *load_entries(FILE *in)
 
 	char *line = NULL;
 	size_t lsize = 0;
-	while (getline(&line, &lsize, in))
+	while (getline(&line, &lsize, in) != -1)
 	{
 		struct entry *e = malloc(sizeof(*e));
 		if (!e)

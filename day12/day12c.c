@@ -128,7 +128,7 @@ static void graph_load(FILE *in, struct graph *g)
 {
 	char *line = NULL;
 	size_t lsize = 0;
-	while (getline(&line, &lsize, in))
+	while (getline(&line, &lsize, in) != -1)
 	{
 		char *src = strtok(line, "-\r\n");
 		if (!src)

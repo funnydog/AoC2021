@@ -27,7 +27,7 @@ static void map_load(FILE *in, struct map *m)
 
 	char *line = NULL;
 	size_t lsize = 0;
-	while (getline(&line, &lsize, in))
+	while (getline(&line, &lsize, in) != -1)
 	{
 		if (line[0] == '\n')
 		{

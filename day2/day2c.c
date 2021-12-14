@@ -66,7 +66,7 @@ static struct instr *parse_file(FILE *in, size_t *count)
 	size_t asize = 0;
 	size_t lsize = 0;
 	char *line = NULL;
-	while (getline(&line, &lsize, in))
+	while (getline(&line, &lsize, in) != -1)
 	{
 		enum cmd cmd;
 		char *tok = strtok(line, " \t\r\n");
