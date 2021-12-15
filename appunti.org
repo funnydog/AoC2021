@@ -1010,3 +1010,36 @@
 
     Avendo implementato l'algoritmo in modo efficiente la parte 2 è
     identica alla parte 1, tranne che i passaggi sono 40.
+
+** Day 15
+
+*** Parte 1
+
+    Il problema consiste nella ricerca del percorso più breve da (0,0)
+    a (m-1, n-1) considerando come distanza la somma dei rischi nel
+    percorso.
+
+    Possiamo usare l'algoritmo di Dijkstra dove ogni arco ha distanza
+    pari al rischio del nodo che raggiunge.
+
+*** Parte 2
+
+    Uguale alla parte 1 tranne che dobbiamo estendere la mappa prima
+    di fare la ricerca.
+
+    La nuova mappa avrà dimensione n*width x n*height e per ogni sua
+    coordinata (x, y) calcoliamo:
+
+    #+BEGIN_EXAMPLE
+    rx = x % old_width
+    ry = y % old_height
+    qx = x // old_width
+    qy = y // old_height
+    #+END_EXAMPLE
+
+    La funzione che genera il rischio di un punto arbitrario (x, y)
+    della nuova mappa sarà:
+
+    #+BEGIN_EXAMPLE
+    new[y][x] = (old[ry][rx] + qx + qy - 1) % 9 + 1
+    #+END_EXAMPLE
