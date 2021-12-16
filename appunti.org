@@ -1048,7 +1048,7 @@
 
 *** Parte 1
 
-    Per leggere agevolmente i dati è necessario leggere una quantità
+    Per risolvere il problema è necessario leggere una quantità
     variabile di bit a partire da una rappresentazione esadecimale di
     lunghezza arbitraria.
 
@@ -1089,21 +1089,44 @@
     #+END_SRC
 
     La funzione parse() è invece ricorsiva e usando la bitstream
-    effettua il parsing dei pacchetti, restituendo un rappresentazione
-    ad albero dei dati.
+    effettua il parsing dei pacchetti, restituendo una
+    rappresentazione ad albero dei dati.
 
-    La funzione interp1() parte dalla rappresentazione ad albero per
-    produrre la somma delle versioni di tutti i pacchetti.
+    Ci sono tre casi:
+
+    1) type == 4: in questo caso il pacchetto contiene un valore
+       numerico da decodificare secondo le regole indicate.
+
+    2) type != 4 e bit successivo == 1: gli 11 bit che seguono
+       indicano il numero di pacchetti contenuti in quello attuale.
+
+    3) type != 4 e bit successivo == 0: i 15 bit che seguono indicano
+       la lunghezza totale dei pacchetti contenuti.
+
+    La risposta alla domanda posta dal problema si ottiene eseguendo
+    la funzione interp1() che restituisce la somma delle versioni di
+    tutti i pacchetti.
 
     Dovendo percorrere un albero, la funzione è ricorsiva e richiama
     sè stessa quando il tipo del pacchetto è diverso da 4.
 
+    #+BEGIN_SRC python
+      def interp1(tree):
+	  ver, typ, children = tree
+	  if typ == 4:
+	      return ver
+	  else:
+	      return ver + sum(interp1(x) for x in children)
+    #+END_SRC
+
 *** Parte 2
 
-    Introduciamo la funzione interp2() che effettua i calcoli
-    stabiliti per ogni tipo di pacchetto.
+    La soluzione è il valore calcolato dalla funzione interp2() che
+    esamina il tipo di pacchetto e a seconda del suo valore esegue
+    delle operazioni sui pacchetti figli.
 
-    Anche questa funzione è ricorsiva, dovendo percorrere l'albero.
+    Anche questa funzione è ricorsiva, dovendo percorrere una
+    struttura ad albero.
 
     Per divertimento c'è anche la funzione tolisp() che converte
     il programma in un'espressione Lisp / Scheme.
