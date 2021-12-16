@@ -1043,3 +1043,67 @@
     #+BEGIN_EXAMPLE
     new[y][x] = (old[ry][rx] + qx + qy - 1) % 9 + 1
     #+END_EXAMPLE
+
+** Day 16
+
+*** Parte 1
+
+    Per leggere agevolmente i dati è necessario leggere una quantità
+    variabile di bit a partire da una rappresentazione esadecimale di
+    lunghezza arbitraria.
+
+    La classe Bitstream agevola il compito consumando la stringa
+    esadecimale di partenza e fornendo i bit richiesti di volta in
+    volta:
+
+    #+BEGIN_SRC python
+      HEXDIGITS = "0123456789ABCDEF"
+
+      class Bitstream(object):
+	  def __init__(self, hexstr):
+	      self.hexstr = hexstr
+	      self.hexpos = 0
+	      self.rawdata = 0
+	      self.avail = 0
+	      self.pos = 0
+
+	  def get(self, bits):
+	      while self.avail < bits:
+		  if self.hexpos >= len(self.hexstr):
+		      raise RuntimeError("EOF")
+
+		  hexval = HEXDIGITS.find(self.hexstr[self.hexpos])
+		  if hexval < 0:
+		      continue
+
+		  self.rawdata = self.rawdata << 4 | hexval
+		  self.hexpos += 1
+		  self.avail += 4
+
+	      self.avail -= bits
+	      self.pos += bits
+
+	      value = self.rawdata >> self.avail
+	      self.rawdata &= (1<<self.avail) - 1
+	      return value
+    #+END_SRC
+
+    La funzione parse() è invece ricorsiva e usando la bitstream
+    effettua il parsing dei pacchetti, restituendo un rappresentazione
+    ad albero dei dati.
+
+    La funzione interp1() parte dalla rappresentazione ad albero per
+    produrre la somma delle versioni di tutti i pacchetti.
+
+    Dovendo percorrere un albero, la funzione è ricorsiva e richiama
+    sè stessa quando il tipo del pacchetto è diverso da 4.
+
+*** Parte 2
+
+    Introduciamo la funzione interp2() che effettua i calcoli
+    stabiliti per ogni tipo di pacchetto.
+
+    Anche questa funzione è ricorsiva, dovendo percorrere l'albero.
+
+    Per divertimento c'è anche la funzione tolisp() che converte
+    il programma in un'espressione Lisp / Scheme.
