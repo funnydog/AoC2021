@@ -1130,3 +1130,100 @@
 
     Per divertimento c'è anche la funzione tolisp() che converte
     il programma in un'espressione Lisp / Scheme.
+
+** Day 17
+
+*** Parte 1
+
+    Ci si chiede quanto in alto può arrivare la sonda prima di entrare
+    nell'area obbiettivo, definita come
+
+    #+BEGIN_EXAMPLE
+    target area: x=X0..X1, y=Y0..Y1
+    #+END_EXAMPLE
+
+    Teoricamente la possiamo lanciare con una velocità iniziale
+    infinitamente alta, ma quando la sonda tornerà indietro mancherà
+    l'area obbiettivo perché la coordinata y diminuirà di una quantità
+    maggiore alla zona in cui si trova l'area.
+
+    Se osserviamo l'andamento sull'asse Y vediamo infatti che se
+    lanciamo la sonda con velocità VY >= 0, dopo un certo numero di
+    passaggi (pari esattamente a 2 * VY + 1) la sonda tornerà a y
+    = 0.
+
+    A quel punto la velocità VY' = -VY -1 (per effetto della gravità).
+
+    Perciò se -VY - 1 < Y0 la sonda mancherà l'area, mentre se -VY -1
+    == Y0 la sonda colpirà l'area nel punto più basso.
+
+    Abbiamo quindi definito il limite superiore della velocità
+    iniziale:
+
+    #+BEGIN_EXAMPLE
+    VY = -Y0 - 1.
+    #+END_EXAMPLE
+
+    Se lanciamo la sonda alla velocità VY raggiungerà il punto più
+    alto quando la velocità diventa 0. Quindi la coordinata finale
+    y-max sarà uguale alla somma di VY + (VY-1) + (VY-2) + ... + 2 +
+    1 + 0.
+
+    Ma questa somma si calcola con la formula di Gauss! Effettuando le
+    opportune sostituzioni otteniamo la risposta alla prima domanda:
+
+    #+BEGIN_EXAMPLE
+    Y-Max = (Y0+1) * Y0 // 2
+    #+END_EXAMPLE
+
+*** Parte 2
+
+    Nella parte 1 abbiamo determinato il valore massimo di VY.
+
+    Possiamo calcolare anche il valore massimo di VX che è banale ed è
+    pari a X1: se lanciamo la sonda a velocità X1, alla prima
+    iterazione la coordinata x sarà all'interno dell'area.
+
+    Se determiniamo anche i valori minimi di VX e VY potremo simulare
+    ogni lancio con velocità comprese tra i minimi e i massimi e
+    verificare quante volte la sonda raggiunge l'area target.
+
+    Il valore minimo di VY è banale ed è pari a Y0: se lanciamo la
+    sonda a una velocità Y0 alla prima iterazione la coordinata y sarà
+    all'interno dell'area target.
+
+    Resta da determinare il valore minimo di VX: osserviamo infatti
+    che se VX è troppo bassa la sonda non arriverà mai all'area
+    target: la distanza percorsa lungo l'asse X dalla sonda è pari a:
+
+    #+BEGIN_EXAMPLE
+    d = (VX + 1) * VX // 2
+    #+END_EXAMPLE
+
+    Sapendo la distanza minima in X che dobbiamo percorrere, e cioè
+    X0, dobbiamo calcolare *VX* tale per cui d = X0.
+
+    Dobbiamo trovare cioè la radice positiva dell'equazione:
+
+    #+BEGIN_EXAMPLE
+    vx^2 + vx - 2*X0 = 0
+    #+END_EXAMPLE
+
+    La soluzione è (sqrt(1 + 8 * X0) - 1) / 2, ma noi abbiamo bisogno
+    dell'intero più vicino per eccesso, quindi applichiamo la funzione
+    ceil().
+
+    Avendo un'intervallo in VX e uno in VY possiamo ora simulare i
+    lanci per ogni VX e VY e contare quante volte la sonda cade
+    nell'area target.
+
+    Possiamo ottimizzare la simulazione evitando di calcolare le
+    velocità VY >= 0.
+
+    Infatti dall'osservazione nella Parte 1, dopo 2*VY+1 passaggi y =
+    0 e VY' = -VY - 1.
+
+    Per la coordinata x ci sono due casi:
+    1) 2*VY+1 >= X: in questo caso VX' = 0 e x = (VX+1) * VX // 2.
+    2) 2*VY+1 < X: la velocità residua VX' = VX - (2*VY+1) mentre la
+       posizione in x = (VX+1) * VX // 2 - (2*VY+2) * (2*VY+1) // 2.
