@@ -1227,3 +1227,50 @@
     1) 2*VY+1 >= X: in questo caso VX' = 0 e x = (VX+1) * VX // 2.
     2) 2*VY+1 < X: la velocità residua VX' = VX - (2*VY+1) mentre la
        posizione in x = (VX+1) * VX // 2 - (2*VY+2) * (2*VY+1) // 2.
+
+** Day 18
+
+*** Parte 1
+
+    Bisogna leggere l'input e per ogni snail-number costruire un tree.
+
+    Ogni nodo dell'albero deve avere un puntatore al nodo padre per
+    poter accedere facilmente al nodo alla sinistra o al nodo alla
+    destra percorrendo l'albero all'inverso.
+
+    Infatti la funzione explode() non solo deve visitare ogni nodo
+    dell'albero ma deve anche aggiungere dei valori al precedente nodo
+    numerico a sinistra o al successivo nodo numerico a destra.
+
+    Le funzioni add_left(node, value) e add_right(node, value)
+    effettuano esattamente questa operazione.
+
+    Le istruzioni di riduzione ci dicono che dopo ciascuna azione
+    explode e split si riparte dalla prima azione che è explode: di
+    conseguenza possiamo eseguire tutti gli explode in un solo
+    passaggio.
+
+    Al termine non ci saranno più nodi da esplodere e proseguiremo con
+    l'operazione split.
+
+    L'operazione split deve essere interrotta: può infatti generare
+    due nodi figli e quindi provocare a sua volta un explode.
+
+    Per questo motivo se un nodo viene splittato richiamiamo subito
+    explode su quel nodo, evitando di dover effettuare altri passaggi
+    completi di explode.
+
+    Per interrompere split() usiamo una variabile globale action che
+    indica se l'operazione è stata effettuata oppure no.
+
+    L'operazione add(a, b) consiste nel creare un nodo con due figli a
+    e b ed effettuarne la riduzione.
+
+    Al termine di tutti gli add avremo quindi un nodo di cui dovremo
+    determinare la magnitude.
+
+*** Parte 2
+
+    Una volta risolta la parte 1 la parte 2 è banale, basta eseguire
+    l'add per ogni coppia di nodi (i,j) per i != j e prendere il
+    valore più grande di magnitude.
