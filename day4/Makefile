@@ -13,4 +13,4 @@ day4: day4.o
 day4c: day4c.o
 
 clean:
-	rm -f *.o day4c
+	rm -f *.o day4 day4c
