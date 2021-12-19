@@ -1274,3 +1274,75 @@
     Una volta risolta la parte 1 la parte 2 è banale, basta eseguire
     l'add per ogni coppia di nodi (i,j) per i != j e prendere il
     valore più grande di magnitude.
+
+** Day 19
+
+*** Parte 1
+
+    Il problema concettualmente è il seguente: se abbiamo due insiemi
+    di punti con coordinate diverse come possiamo determinare se si
+    tratta dello stesso insieme traslato di un certo vettore?
+
+    Se Ai è un punto in A e Bj è un punto in B possiamo trovare il
+    vettore che congiunge Ai e Bj calcolando la differenza tra i due
+    punti:
+
+    #+BEGIN_SRC python
+      def sub(a, b):
+	  return tuple(a[i]-b[i] for i in range(3))
+    #+END_SRC
+
+    Se tutti i punti di A sono punti di B al netto di una traslazione
+    allora ci sarà un vettore *v* che si ripeterà *n* volte dove *n* è
+    il numero dei punti in A e B.
+
+    Quindi teniamo un dizionario delle differenze vettoriali dove
+    segniamo quante volte si ripete un certo vettore *v* = sub(Ai,Bj).
+
+    Nel momento in cui troviamo un vettore che si ripete almeno 12
+    volte significa che i due insiemi si sovrappongono (12 elementi in
+    comune è il dato fornito dal problema).
+
+    Purtroppo c'è l'ulteriore complicazione della rotazione: oltre che
+    una traslazione è possibile anche una rotazione di 90°, 180° e
+    270° su ogni asse per un totale di 24 rotazioni.
+
+    Per ogni rotazione dovremo trasformare i punti di B e calcolare
+    le differenze comuni >= 12.
+
+    A quel punto avremo sia la rotazione che la traslazione necessaria
+    per trasformare le coordinate da B ad A.
+
+    Le matrici di rotazione possono essere generate con 4 rotazioni su
+    ogni asse e inserendo il risultato in un set() che elimina i
+    duplicati.
+
+    Partendo dal primo insieme come riferimento, troviamo rotazione e
+    traslazione per gli altri, confrontando i punti del primo con i
+    punti di un altro.
+
+    Quando per ogni insieme avremo trovato la rotazione e la
+    traslazione, potremo calcolare la posizione assoluta di ogni punto
+    di ogni insieme.
+
+    Inserendo queste posizioni assolute in un set() e calcolandone la
+    dimensione avremo la risposta alla prima domanda.
+
+*** Parte 2
+
+    Con i dati calcolati in precedenza, determiniamo la posizione di
+    ciascuno scanner:
+
+    #+BEGIN_SRC python
+      def find_position(s):
+	  point = (0, 0, 0)
+	  t = s
+	  while t.ref:
+	      point = sub(vmul(t.rot, point), t.tran)
+	      t = t.ref
+
+	  s.pos = point
+    #+END_SRC
+
+    Calcoliamo quindi la distanza di Manhattan per ciascuna coppia di
+    scanner trovando quella maggiore.
