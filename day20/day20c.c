@@ -15,6 +15,7 @@ struct dict
 	} *table;
 	size_t count;
 	size_t size;
+	int xmin, xmax, ymin, ymax;
 };
 
 static inline size_t hashfn(int x, int y)
@@ -64,6 +65,8 @@ static void dict_clear(struct dict *d)
 		d->table[i].x = INT_MAX;
 	}
 	d->count = 0;
+	d->xmin = d->ymin = INT_MAX;
+	d->xmax = d->ymax = INT_MIN;
 }
 
 static void dict_set(struct dict *d, int x, int y, int value)
@@ -91,6 +94,10 @@ static void dict_set(struct dict *d, int x, int y, int value)
 		d->table[idx].y = y;
 		d->table[idx].value = value;
 		d->count++;
+		if (d->xmin > x) d->xmin = x;
+		if (d->xmax < x) d->xmax = x;
+		if (d->ymin > y) d->ymin = y;
+		if (d->ymax < y) d->ymax = y;
 	}
 }
 
@@ -117,8 +124,6 @@ struct map
 	struct dict data;
 	struct dict swap;
 	int bg;
-	int xmin, xmax;
-	int ymin, ymax;
 };
 
 static void map_release(struct map *m)
@@ -131,9 +136,6 @@ static void load_map(FILE *in, struct map *m)
 {
 	dict_clear(&m->data);
 	m->bg = '.';
-	m->xmin = m->ymin = INT_MAX;
-	m->xmax = m->ymax = INT_MIN;
-
 	int ch;
 	int x, y;
 	x = y = 0;
@@ -143,11 +145,6 @@ static void load_map(FILE *in, struct map *m)
 		{
 		case '#':
 			dict_set(&m->data, x, y, '#');
-			if (m->xmin > x) m->xmin = x;
-			if (m->xmax < x) m->xmax = x;
-			if (m->ymin > y) m->ymin = y;
-			if (m->ymax < y) m->ymax = y;
-
 		case '.':
 			x++;
 			break;
@@ -166,14 +163,10 @@ static void load_map(FILE *in, struct map *m)
 static void map_enhance(struct map *m, const char *algo)
 {
 	int nbg = m->bg == '#' ? algo[511] : algo[0];
-	int xmin, xmax, ymin, ymax;
-	xmin = ymin = INT_MAX;
-	xmax = ymax = INT_MIN;
-
 	dict_clear(&m->swap);
-	for (int y = m->ymin - 2; y <= m->ymax + 2; y++)
+	for (int y = m->data.ymin - 2; y <= m->data.ymax + 2; y++)
 	{
-		for (int x = m->xmin - 2; x <= m->xmax + 2; x++)
+		for (int x = m->data.xmin - 2; x <= m->data.xmax + 2; x++)
 		{
 			unsigned idx = 0;
 			for (int ny = y-1; ny <= y + 1; ny++)
@@ -191,22 +184,13 @@ static void map_enhance(struct map *m, const char *algo)
 			if (algo[idx] != nbg)
 			{
 				dict_set(&m->swap, x, y, algo[idx]);
-				if (xmin > x) xmin = x;
-				if (xmax < x) xmax = x;
-				if (ymin > y) ymin = y;
-				if (ymax < y) ymax = y;
 			}
 		}
 	}
 	struct dict t = m->data;
 	m->data = m->swap;
 	m->swap = t;
-
 	m->bg = nbg;
-	m->xmin = xmin;
-	m->xmax = xmax;
-	m->ymin = ymin;
-	m->ymax = ymax;
 }
 
 static void load_algo(FILE *in, char *algo)
