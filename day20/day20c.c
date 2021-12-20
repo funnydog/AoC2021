@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DCTINCR 53
+#define COLLISON_INC 53
 
 struct dict
 {
@@ -45,7 +45,7 @@ static void dict_rehash(struct dict *d)
 		size_t idx = hashfn(d->table[i].x, d->table[i].y) % size;
 		while (table[idx].x != INT_MAX)
 		{
-			idx += DCTINCR;
+			idx += COLLISON_INC;
 			if (idx >= size)
 			{
 				idx -= size;
@@ -82,7 +82,7 @@ static void dict_set(struct dict *d, int x, int y, int value)
 		{
 			break;
 		}
-		idx += DCTINCR;
+		idx += COLLISON_INC;
 		if (idx >= d->size)
 		{
 			idx -= d->size;
@@ -110,7 +110,7 @@ static int dict_get(const struct dict *d, int x, int y, int def)
 		{
 			return d->table[idx].value;
 		}
-		idx += DCTINCR;
+		idx += COLLISON_INC;
 		if (idx >= d->size)
 		{
 			idx -= d->size;
