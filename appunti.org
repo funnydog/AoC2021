@@ -1346,3 +1346,62 @@
 
     Calcoliamo quindi la distanza di Manhattan per ciascuna coppia di
     scanner trovando quella maggiore.
+
+** Day 20
+
+*** Parte 1
+
+    La mappa è infinita quindi dobbiamo usare una mappa sparsa, cioè
+    un dizionario, nel quale a una coppia di coordinate corrisponde un
+    light pixel.
+
+    La procedura enhance() percorre tutta la mappa e determina i nuovi
+    pixel.
+
+    Ci sono però due trabocchetti:
+
+    1) dobbiamo determinare l'estensione della mappa durante
+       l'inserimento dei light pixels.
+
+    2) l'algoritmo può trasformare una zona completamente dark in una
+       zona completamente light.
+
+    Il punto 1) è facilmente risolvibile mantendo le variabili xmin,
+    xmax e ymin e ymax e aggiornandole ogni volta che inseriamo un
+    punto nel dizionario.
+
+    Per creare la nuova mappa partiremo dalle coordinate (xmin-2,
+    ymin-2) e finiremo alle coordinate (xmax+2, ymax+2).
+
+    Per quanto riguarda il punto 2) se l'algoritmo inizia con un light
+    pixel '#' tutte le aree 3x3 di dark pixel si trasformano in light
+    pixel perché generano un indice pari a 0.
+
+    Poiché la mappa è infinita significa che avremo un numero infinito
+    di light pixel.
+
+    Possiamo modellare questa situazione memorizzando il background e
+    inserendo solo quei punti che non sono background.
+
+    Inizialmente il background è di dark pixel '.' e nella mappa sono
+    memorizzati i light pixel '#'.
+
+    Alla prima iterazione il background si trasformerà in light pixel
+    '#' e la mappa salverà solo i dark pixel '.'.
+
+    Nell'enhance() successiva le aree 3x3 di light pixel, che generano
+    l'indice 511, cambieranno sicuramente colore: se non lo facessero
+    la risposta alla domanda sarebbe infinito. Infatti alla poizione
+    511 l'algoritmo avrà sicuramente un dark pixel '.'.
+
+    Il nuovo background diventerà di dark pixel '.' e salveremo nella
+    mappa i light pixel '#'.
+
+    Dopo questi due enhance() la mappa conterrà sicuramente i light
+    pixel e la risposta alla domanda sarà il numero di punti nella
+    mappa.
+
+*** Parte 2
+
+    Continuiamo a eseguire enhance() altre 48 volte e contiamo i punti
+    della mappa.
