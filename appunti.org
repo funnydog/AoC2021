@@ -1409,3 +1409,57 @@
 
     Continuiamo a eseguire enhance() altre 48 volte e contiamo i punti
     della mappa.
+
+** Day 21
+
+*** Parte 1
+
+    Si risolve semplicemente implementando le regole descritte per il
+    lancio dei dadi.
+
+*** Parte 2
+
+    Qui sorgono i problemi: dobbiamo determinare in quanti universi
+    vince il player 1 e in quanti vince il player 2.
+
+    Il numero degli universi in cui vincono i due giocatori sono
+    determinati dalle loro posizioni e dal loro punteggio corrente.
+
+    Quindi creiamo una funzione search(p1, p2, s1, s2) che restituisce
+    i due valori w1 e w2 cioè il numero di universi in cui vince il
+    giocatore 1 e il giocatore 2.
+
+    Il giocatore p1 sarà quello che effettuerà il lancio dei dadi.
+
+    Lanciando i dadi tre volte avremmo i seguenti punti possibili:
+
+    #+BEGIN_SRC python
+      [3, 4, 5, 4, 5, 6, 5, 6, 7, 4, 5, 6, 5, 6, 7, 6, 7, 8, 5, 6, 7, 6, 7, 8, 7, 8, 9]
+    #+END_SRC
+
+    Per ogni possibile risultato dei dadi:
+
+    1) se il punteggio del giocatore p1 ns1 >= 21 aggiungeremo 1 alle
+       vittorie di p1 (w1 += 1).
+    2) altimenti invocheremo search(p2, np1, s2, ns1) e aggiungeremo
+       le vittorie di p2 e di p1 alle vittorie correnti. Notare che
+       essendo il turno di p2, p2 è il primo argomento passato alla
+       funzione.
+
+    Quindi la funzione è ricorsiva ed essendo i valori di p1, p2, s1,
+    s2 limitati, viene richiamata con gli stessi argomenti molte
+    volte.
+
+    Per evitare di calcolare nuovamente valori già determinati si usa
+    la tecnica di programmazione dinamica detta memoization: una volta
+    effettuato un calcolo oneroso memorizziamo il risultato in un
+    dizionario.
+
+    Quando la funzione sarà richiamata con gli stessi argomenti,
+    anziché effettuare il calcolo, sarà restituito il valore
+    memorizzato in precedenza.
+
+    In python il decorator @cache (from functools import cache)
+    effettua questo servizio automaticamente.
+
+    In C o in C++ sarà necessario memorizzare i valori in una matrice.
