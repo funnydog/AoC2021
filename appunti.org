@@ -1463,3 +1463,83 @@
     effettua questo servizio automaticamente.
 
     In C o in C++ sarà necessario memorizzare i valori in una matrice.
+
+** Day 22
+
+*** Parte 1
+
+    La prima parte può essere risolta facilmente usando una sparse
+    map, cioè un dizionario in cui teniamo traccia dei cubi accesi.
+
+*** Parte 2
+
+    Purtroppo non possiamo usare l'approccio precedente perché le
+    dimensioni dei cubi sono enormi.
+
+    Possiamo però trattare i cuboidi come entità geometriche, cioè
+    come coppie di punti p0, p1 che li delimitano.
+
+    Per questa rappresentazione dobbiamo sviluppare le due operazioni
+    di somma e differenza.
+
+    Per facilitare l'analisi consideriamo i cuboidi come entità in due
+    dimensioni (cioè dei rettangoli) e il loro volume pari alla loro
+    area.
+
+    Dati due cuboidi A e B, la somma A+B si articola in due casi:
+
+    1) se A e B non si intersecano il volume del risultato
+       dell'operazione sarà la somma dei volumi di A e B.
+    2) se A e B si intersecano il volume del risultato dell'operazione
+       sarà la somma dei volumi di A e B meno il volume
+       dell'intersezione tra A e B. Se non sottraiamo l'intersezione
+       sarà conteggiata due volte, una per A e una per B.
+
+    Si intravede che il risultato di ogni somma saranno due liste di
+    cuboidi: la lista dei cuboidi "on" e la lista delle intersezioni
+    "off".
+
+    Dati due cuboidi A e B, la differenza A-B si articola in due casi:
+
+    1) se A e B non si intersecano il volume del risultato
+       dell'operazione sarà uguale al volume di A.
+    2) se A e B si intersecano il volume al termine dell'operazione
+       sarà uguale al volume di A meno il volume dell'intersezione tra
+       A e B.
+
+    Anche in questo caso il risultato dovrà essere memorizzato in due
+    liste di cuboidi.
+
+    Quindi creiamo due liste: la lista *ON* che avrà tutti i cuboidi
+    accesi e la lista *OFF* con tutte le intersezioni ridondanti da
+    sottrarre.
+
+    Il volume dei cuboidi accesi in ogni momento sarà dato dalla somma
+    dei volumi di *ON* meno la somma dei volumi di *OFF*.
+
+    Nel caso dell'operazione "on" dovremo calcolare le intersezioni
+    tra il cuboide specificato nell'istruzione e ogni cuboide della
+    lista *ON*. Queste intersezioni saranno inserite nella lista
+    *OFF*.
+
+    Dobbiamo inoltre calcolare ogni intersezione tra cuboide
+    dell'istruzione e ogni elemento della lista *OFF* perché
+    un'operazione "on" potrebbe riaccenderle. Queste intersezioni
+    saranno inserite nella lista *ON*.
+
+    Infine lo stesso cuboide dell'istruzione deve essere inserito
+    nella lista *ON*.
+
+    L'operazione "off" è praticamente identica, tranne per l'ultimo
+    passaggio: il cuboide dell'istruzione non deve essere inserito in
+    nessuna lista.
+
+    Non resta che partire da due liste vuote ed eseguire le istruzioni
+    per ottenere la risposta alla domanda: sarà pari alla somma dei
+    volumi dei cuboidi *ON* meno la somma dei volumi dei cuboidi
+    *OFF*.
+
+    NOTA: nel repository è presente anche una soluzione alternativa
+    che effettua l'effettiva divisione geometrica dei cubi e il cui
+    tempo di esecuzione è un ordine di grandezza inferiore in tutte le
+    implementazioni.
