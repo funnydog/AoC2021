@@ -1721,3 +1721,35 @@
     Ho scelto la seconda opzione perché le modifiche al codice sono
     minime e il tempo di esecuzione è accettabile (0.8 secondi in
     python, 0.01 secondi in C).
+
+** Day 25
+
+*** Parte 1
+
+    Bisogna aggiornare la mappa seguendo le regole date in due step
+    successivi, muovendo prima le oloturie (ROTFL) ">" e poi le
+    oloturie "v".
+
+    Non possiamo aggiornare la mappa in-place perché tutte le oloturie
+    di un tipo si muovono simultaneamente.
+
+    Quindi dobbiamo salvare il risultato in una nuova mappa in cui
+    spostiamo solo le oloturie di un tipo alla volta.
+
+    Infine dobbiamo avere anche la mappa iniziale per confrontare
+    punto di partenza e il risultato finale e vedere se le oloturie
+    sono tutte bloccate.
+
+    Quindi per effettuare uno step abbiamo bisogno di tre mappe. Al
+    termine dello step determiniamo se le oloturie sono bloccate e in
+    quel caso ci fermiamo.
+
+*** Parte 2
+
+    Bonus!!! Siamo arrivati alla fine di un'improbabile storia
+    subacquea: se ti cadono le chiavi in mare è naturale che finiscano
+    nella fossa delle Marianne... </g>
+
+    Ma finalmente Babbo Natale potrà usare la sua slitta, hurrah!
+
+    Buon Natale 2021 e arrivedorci al prossimo Advent of Code :)
