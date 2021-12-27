@@ -1611,3 +1611,113 @@
     Ho provato a implementare lo stesso algoritmo in Python ma il
     costo abnorme delle invocazioni di funzione domina tutta la
     ricerca e alla fine l'algorimo A* risulta più lento.
+
+** Day 24
+
+*** Parte 1
+
+    E' inutile programmare una ALU che interpreti il programma se
+    prima non lo studiamo, anche perché dovremo fare una ricerca in
+    uno spazio di 9**14 numeri, con tempi improponibili.
+
+    Il programma deve analizzare un numero di 14 cifre ma è privo di
+    istruzioni di loop e quindi dovranno esserci 14 frammenti di
+    codice che caricano la cifra per ciascuna posizione con
+    l'istruzione inp e poi la elaborano.
+
+    E infatti guardando il codice è proprio così.
+
+    I frammenti di codice che elaborano ciascuna posizione sembrano
+    quasi uguali: cambiano solo dei literals in corrispondenza di
+    alcune istruzioni.
+
+    Confrontando ciascun frammento con l'altro possiamo determinare le
+    istruzioni che cambiano ed estrarre i tre valori, a, b, c per
+    ciascuna delle 14 cifre da elaborare.
+
+    Inoltre, analizzando il codice manualmente, vediamo che ciascun
+    frammento è equivalente al seguente codice python:
+
+    #+BEGIN_SRC python
+      def shot(a, b, c, d, z):
+	  if (z % 26) + b != d:
+	      return (z // a) * 26 + d + c
+	  else:
+	      return z // a
+    #+END_SRC
+
+    Gli argomenti a, b, c sono i valori estratti per il frammento, d è
+    la cifra caricata dall'istruzione `inp w` e z è il valore
+    precedente del registro z.
+
+    La funzione ritorna il nuovo valore di z.
+
+    Possiamo costruire un algoritmo di backtracking che faccia una
+    ricerca esaustiva di tutte le cifre nelle 14 posizioni, partendo
+    dalla prima e determinando le sequenze che generano un valore
+    finale z = 0.
+
+    Per ogni posizione partiamo dalla cifra 9 e arriviamo a 1,
+    eliminando le cifre che non sono ammissibili in base ai valori di
+    a, b e c.
+
+    Infatti se b > 0 tutte le cifre sono possibili, se invece b < 0
+    sono possibili solo le cifre d che soddisfano la relazione `z %
+    26 + b == d`.
+
+    #+BEGIN_SRC python
+      def backtrack(res, k, z, clist):
+	  if k == 14:
+	      if z == 0:
+		  value = 0
+		  for d in res:
+		      value = value * 10 + d
+		  print(res)
+		  exit(0)
+	  else:
+	      a, b, c = clist[k]
+	      for d in range(9, 0, -1):
+		  if b > 0 or z % 26 + b == d:
+		      res.append(d)
+		      backtrack(res, k+1, shot(a, b, c, d, z), clist)
+		      res.pop()
+    #+END_SRC
+
+    La funzione è invocata con i seguenti argomenti: backtrack([], 0,
+    0, clist).
+
+    Il parametro clist è la lista dei literals a,b,c per ogni
+    frammento di codice.
+
+*** Parte 2
+
+    Per trovare il valore minimo ammissibile possiamo ricercare le
+    cifre nell'ordine inverso partendo dalla 1 fino alla 9,
+    modificando l'algoritmo.
+
+    Oppure possiamo continuare nella ricerca precedente trovando tutte
+    le soluzioni e la risposta sarà l'ultima soluzione ammissibile:
+
+    #+BEGIN_SRC python
+      solutions = []
+
+      def backtrack(res, k, z, clist):
+	  global solutions
+	  if k == 14:
+	      if z == 0:
+		  value = 0
+		  for d in res:
+		      value = value * 10 + d
+		  solutions.append(value)
+	  else:
+	      a, b, c = clist[k]
+	      for d in range(9, 0, -1):
+		  if b > 0 or z % 26 + b == d:
+		      res.append(d)
+		      backtrack(res, k+1, shot(a, b, c, d, z), clist)
+		      res.pop()
+    #+END_SRC
+
+    Ho scelto la seconda opzione perché le modifiche al codice sono
+    minime e il tempo di esecuzione è accettabile (0.8 secondi in
+    python, 0.01 secondi in C).
