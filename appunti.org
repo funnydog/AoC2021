@@ -1543,3 +1543,71 @@
     che effettua l'effettiva divisione geometrica dei cubi e il cui
     tempo di esecuzione è un ordine di grandezza inferiore in tutte le
     implementazioni.
+
+** Day 23
+
+*** Parte 1
+
+    Dobbiamo effettuare una ricerca in un grafo delle decisioni: ogni
+    decisione è uno spostamento di un anfipode sulla mappa tra tutti
+    quelli possibili.
+
+    Il risultato di ogni decisione è una nuova mappa con associata
+    l'energia necessaria per spostare l'anfipode più l'energia
+    necessaria per raggiungere la mappa precedente.
+
+    Una ricerca efficiente si ottiene con l'algoritmo di Dijkstra:
+
+    #+BEGIN_SRC python
+      def dijkstra(start):
+	  visited = {}
+	  heap = []
+
+	  visited[start] = 0
+	  heapq.heappush(heap, (0, start))
+
+	  while heap:
+	      dist, m = heapq.heappop(heap)
+	      if m.complete():
+		  return dist
+
+	      for dd, mm in decisions(m):
+		  ndist = dist + dd
+		  if not mm in visited or ndist < visited[mm]:
+		      visited[mm] = ndist
+		      heapq.heappush(heap, (ndist, mm))
+    #+END_SRC
+
+    La funzione ausiliaria decisions(m) elenca le possibili nuove
+    mappe ottenute dallo spostamento di un anfipode partendo alla
+    mappa m, nonché l'energia richiesta per lo spostamento.
+
+*** Parte 2
+
+    Come la parte 1 ma con una mappa modificata con le due righe
+    aggiuntive.
+
+    L'algoritmo risolve questa mappa anche più velocemente della
+    precedente.
+
+    L'implementazione Python impiega la bellezza di 5 secondi mentre
+    l'implementazione C impiega 0.13 secondi.
+
+    In realtà le implementazioni C e C++ nel repository usano
+    l'algorimo di ricerca A* anziché Dijkstra: vengono preferite le
+    mappe più vicine alla soluzione in base a una funzione euristica
+    che stima la distanza dall'obbiettivo.
+
+    La stima è la somma dell'energia già spesa e dell'energia
+    necessaria per portare gli anfipodi dalla loro posizione corrente
+    alla coordinata X della loro stanza.
+
+    Non è importante che il risultato sia esatto, basta che non sia
+    sovrastimato e in questo caso non lo è: la coordinata y degli
+    anfipodi non è nemmeno conteggiata.
+
+    L'uso di A* riduce il tempo di ricerca della metà.
+
+    Ho provato a implementare lo stesso algoritmo in Python ma il
+    costo abnorme delle invocazioni di funzione domina tutta la
+    ricerca e alla fine l'algorimo A* risulta più lento.
