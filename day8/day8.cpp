@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	Entry e;
 	while (in>>e)
 	{
-		entries.emplace_back(e);
+		entries.push_back(move(e));
 	}
 	in.close();
 

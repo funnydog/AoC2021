@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 	Segment tmp;
 	while (in >> tmp)
 	{
-		segs.emplace_back(tmp);
+		segs.push_back(move(tmp));
 	}
 	in.close();
 

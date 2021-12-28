@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
 	string line;
 	while (getline(in, line))
 	{
-		numbers.emplace_back(parse(line));
+		numbers.push_back(parse(line));
 	}
 	in.close();
 

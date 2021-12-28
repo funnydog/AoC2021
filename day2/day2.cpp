@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	Ins tmp;
 	while (in >> tmp)
 	{
-		program.emplace_back(tmp);
+		program.push_back(move(tmp));
 	}
 	in.close();
 

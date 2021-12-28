@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	string line;
 	while (getline(in, line))
 	{
-		lines.emplace_back(line);
+		lines.push_back(move(line));
 	}
 	in.close();
 

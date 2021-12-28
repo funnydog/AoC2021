@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 	Board b;
 	while (in >> b)
 	{
-		boards.emplace_back(b);
+		boards.push_back(move(b));
 	}
 	in.close();
 

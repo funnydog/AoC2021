@@ -69,7 +69,7 @@ static istream& operator>>(istream& in, Map& m)
 		{
 			m.width = str.size();
 		}
-		m.data.emplace_back(str);
+		m.data.push_back(move(str));
 		m.height++;
 	}
 	m.visited.resize(m.width * m.height, 0);

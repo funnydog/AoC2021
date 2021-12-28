@@ -21,10 +21,10 @@ static vector<tuple<int, int, int>> constants(const string& str)
 	size_t pos;
 	while ((pos = str.find("inp", old + 3)) != string::npos)
 	{
-		frags.emplace_back(str.substr(old, pos));
+		frags.push_back(str.substr(old, pos));
 		old = pos;
 	}
-	frags.emplace_back(str.substr(old));
+	frags.push_back(str.substr(old));
 
 	vector<size_t> lines;
 	for (size_t i = 0; i < frags.size(); i++)

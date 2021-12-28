@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
 	Scanner tmp;
 	while (in >> tmp)
 	{
-		scanners.emplace_back(move(tmp));
+		scanners.push_back(move(tmp));
 	}
 	in.close();
 
