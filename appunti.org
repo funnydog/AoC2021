@@ -1523,12 +1523,59 @@
     *OFF*.
 
     Dobbiamo inoltre calcolare ogni intersezione tra cuboide
-    dell'istruzione e ogni elemento della lista *OFF* perché
-    un'operazione "on" potrebbe riaccenderle. Queste intersezioni
-    saranno inserite nella lista *ON*.
+    dell'istruzione e ogni elemento della lista *OFF* e inserire
+    queste intersezioni nella lista *ON*.
 
-    Infine lo stesso cuboide dell'istruzione deve essere inserito
-    nella lista *ON*.
+    Per capirne il perché pensiamo a due rettangoli A, B che si
+    intersecano. La loro somma produce le seguenti liste:
+
+    #+BEGIN_EXAMPLE
+    *ON* = [A, B]
+    *OFF* = [A︀∩B]
+    #+END_EXAMPLE
+
+    Aggiungiamo ora un rettangolo C che ricopre entrambi A e B:
+
+    #+BEGIN_EXAMPLE
+    *ON* = [A, B, C]
+    *OFF* = [A∩B, A∩C, B∩C]
+    #+END_EXAMPLE
+
+    L'area totale deve essere pari all'area di C:
+
+    #+BEGIN_EXAMPLE
+    X = Area(A) + Area(B) + Area(C) - Area(A∩B) - Area(A∩C) -
+    Area(B∩C)
+    #+END_EXAMPLE
+
+    Poiché C compre interamente sia A che B, A∩C = A e B∩C = B:
+
+    #+BEGIN_EXAMPLE
+    X = Area(A) + Area(B) + Area(C) - Area(A∩B) - Area(A) - Area(C)
+
+    X = Area(C) - Area(A∩B)
+    #+END_EXAMPLE
+
+    Il risultato ottenuto non è corretto. Per farlo tornare dobbiamo
+    aggiungere il rettangolo A∩B∩C alla lista *ON*, che si ottiene
+    dall'intersezione di C con gli elementi iniziali della lista
+    *OFF*:
+
+    #+BEGIN_EXAMPLE
+    *ON* = [A, B, C, A∩B∩C]
+    *OFF* = [A∩B, A∩C, B∩C]
+    #+END_EXAMPLE
+
+    L'area totale sarà quindi:
+
+    #+BEGIN_EXAMPLE
+    X = Area(A) + Area(B) + Area(C) + Area(A∩B∩C) - Area(A∩B) - Area(A∩C) -
+    Area(B∩C)
+
+    X = Area(A) + Area(B) + Area(C) + Area(A∩B) - Area(A∩B) - Area(A) - Area(B)
+
+    X = Area(C)
+    #+END_EXAMPLE
 
     L'operazione "off" è praticamente identica, tranne per l'ultimo
     passaggio: il cuboide dell'istruzione non deve essere inserito in
