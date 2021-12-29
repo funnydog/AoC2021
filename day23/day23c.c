@@ -40,6 +40,8 @@ struct heap
 	size_t size;
 };
 
+static struct map *freelist;
+
 static void map_build_points(const struct map *m, struct point *p)
 {
 	memset(p, 0, 27 * sizeof(*p));
@@ -117,19 +119,31 @@ static void map_insert_at(struct map *m, int y, const char *txt)
 	}
 }
 
+static void map_free(struct map *m)
+{
+	if (m)
+	{
+		m->next = freelist;
+		freelist = m;
+	}
+}
+
 static struct map *map_clone(const struct map *src, struct map *next)
 {
-	struct map *n = malloc(sizeof(*n));
-	if (n)
+	struct map *n;
+	if (freelist)
 	{
-		*n = *src;
-		n->next = next;
-		return n;
+		n = freelist;
+		freelist = n->next;
 	}
-	else
+	else if (!(n = malloc(sizeof(*n))))
 	{
 		return next;
 	}
+
+	*n = *src;
+	n->next = next;
+	return n;
 }
 
 static int map_complete(const struct map *m)
@@ -254,7 +268,7 @@ static void heap_clear(struct heap *h)
 {
 	for (size_t i = 0; i < h->count; i++)
 	{
-		free(h->table[i].data);
+		map_free(h->table[i].data);
 	}
 	h->count = 0;
 }
@@ -519,7 +533,7 @@ static size_t astar(struct map *start, struct hash *visited, struct heap *queue)
 		if (map_complete(el.data))
 		{
 			result = el.data->energy;
-			free(el.data);
+			map_free(el.data);
 			break;
 		}
 		for (struct map *n = transitions(el.data); n; )
@@ -533,11 +547,11 @@ static size_t astar(struct map *start, struct hash *visited, struct heap *queue)
 			}
 			else
 			{
-				free(n);
+				map_free(n);
 			}
 			n = next;
 		}
-		free(el.data);
+		map_free(el.data);
 	}
 	return result;
 }
@@ -572,6 +586,13 @@ int main(int argc, char *argv[])
 		heap_release(&queue);
 		hash_release(&visited);
 		free(m);
+	}
+
+	while (freelist)
+	{
+		struct map *next = freelist->next;
+		free(freelist);
+		freelist = next;
 	}
 	return 0;
 }
